@@ -64,6 +64,7 @@ for ship, records in ais_data.items():
 # Now, `ais_data` contains all AIS data organized by ship name
 
 
+print(len(ais_data))
 
 
 
