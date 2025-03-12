@@ -5,7 +5,7 @@ Created on Wed Mar 12 11:16:39 2025
 @author: evert
 """
 
-#this is a test for k_means AIS data process
+# This is a test for k_means AIS data process
 
 import os
 import csv
@@ -31,15 +31,22 @@ for file_name in os.listdir(folder_path):
                 if ship_name not in ais_data:
                     ais_data[ship_name] = []
                 
-                # Store AIS data for this ship
+                # Helper function to convert empty or invalid fields to None or default value
+                def safe_float(value, default=None):
+                    try:
+                        return float(value) if value.strip() else default
+                    except ValueError:
+                        return default
+
+                # Store AIS data for this ship with checks for empty or invalid fields
                 ais_data[ship_name].append({
-                    "draught": float(row["navigation.draught"]),
+                    "draught": safe_float(row["navigation.draught"]),
                     "time": row["navigation.time"],
-                    "speed": float(row["navigation.speed"]),
-                    "heading": float(row["navigation.heading"]),
-                    "longitude": float(row["navigation.location.long"]),
-                    "latitude": float(row["navigation.location.lat"]),
-                    "course": float(row["navigation.course"]),
+                    "speed": safe_float(row["navigation.speed"]),
+                    "heading": safe_float(row["navigation.heading"], default=0.0),
+                    "longitude": safe_float(row["navigation.location.long"]),
+                    "latitude": safe_float(row["navigation.location.lat"]),
+                    "course": safe_float(row["navigation.course"]),
                     "destination": row["navigation.destination.name"],
                     "eta": row["navigation.destination.eta"],
                     "status": row["navigation.status"],
@@ -55,3 +62,11 @@ for ship, records in ais_data.items():
     break  # Just to limit output
 
 # Now, `ais_data` contains all AIS data organized by ship name
+
+
+
+
+
+
+
+
