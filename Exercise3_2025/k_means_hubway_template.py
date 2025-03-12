@@ -93,7 +93,7 @@ def calculate_error(a,b):
     Given two Numpy Arrays, calculates the sum of squared errors.
     '''
     #!!!  IMPLEMENT the computation of the distance, i.e., the error between two arrays !!! #
-
+    error = np.sum((a - b) ** 2)
     return error 
 
 # Now we can assign the observations to the centroids
@@ -119,8 +119,8 @@ def assign_centroids(data, centroids):
 
         # Calculate closest centroid & error 
         #!!!  IMPLEMENT the assignment  to the closest centroid !!! #
-        closest_centroid =  
-        centroid_error = 
+        closest_centroid =  np.argmin(errors)
+        centroid_error = errors[closest_centroid]
 
         # Assign values to lists
         centroid_assign.append(closest_centroid)
@@ -200,8 +200,8 @@ from sklearn.cluster import KMeans
 wcss = []
 N_max = 30
 for i in range(1, N_max):
-    #kmeans = KMeans ...
-    #...
+    kmeans = KMeans(n_clusters=i, random_state=1)
+    kmeans.fit(X)
     wcss.append(kmeans.inertia_)
     
 plt.figure()
@@ -238,23 +238,42 @@ plt.show()
 
 # !!!!!! ANSWER THE QUESTIONS BELOW  AND PRINT THE OUTPUTS !!!!!!
 # What percentage of the data is assigned to each cluster? 
-cluster1per = 
-cluster2per = 
-cluster3per = 
+# What percentage of the data is assigned to each cluster?
+cluster1per = (X[X['cluster'] == 0].shape[0] / X.shape[0]) * 100
+cluster2per = (X[X['cluster'] == 1].shape[0] / X.shape[0]) * 100
+cluster3per = (X[X['cluster'] == 2].shape[0] / X.shape[0]) * 100
 
-# Provide: 
-# - The average trip duration in each cluster
-avgDuration1 = 
-avgDuration2 = 
-avgDuration3 = 
-# - The percentage of trips made by people above 50 years old in each cluster
-perAge50_1 = 
-perAge50_2 = 
-perAge50_3 = 
-#- The percentage of trips made at night in each cluster
-perNI1 = 
-perNI2 = 
-perNI3 = 
+print(f"Cluster 1: {cluster1per:.2f}%")
+print(f"Cluster 2: {cluster2per:.2f}%")
+print(f"Cluster 3: {cluster3per:.2f}%")
+
+# Average trip duration in each cluster
+avgDuration1 = X[X['cluster'] == 0]['Duration'].mean()
+avgDuration2 = X[X['cluster'] == 1]['Duration'].mean()
+avgDuration3 = X[X['cluster'] == 2]['Duration'].mean()
+
+print(f"Average Duration in Cluster 1: {avgDuration1:.2f}")
+print(f"Average Duration in Cluster 2: {avgDuration2:.2f}")
+print(f"Average Duration in Cluster 3: {avgDuration3:.2f}")
+
+# The percentage of trips made by people above 50 years old in each cluster
+perAge50_1 = (X[(X['cluster'] == 0) & (X['Age'] > 50)].shape[0] / X[X['cluster'] == 0].shape[0]) * 100
+perAge50_2 = (X[(X['cluster'] == 1) & (X['Age'] > 50)].shape[0] / X[X['cluster'] == 1].shape[0]) * 100
+perAge50_3 = (X[(X['cluster'] == 2) & (X['Age'] > 50)].shape[0] / X[X['cluster'] == 2].shape[0]) * 100
+
+print(f"Percentage of people above 50 in Cluster 1: {perAge50_1:.2f}%")
+print(f"Percentage of people above 50 in Cluster 2: {perAge50_2:.2f}%")
+print(f"Percentage of people above 50 in Cluster 3: {perAge50_3:.2f}%")
+
+# The percentage of trips made at night in each cluster
+perNI1 = (X[(X['cluster'] == 0) & (X['Night'] == 1)].shape[0] / X[X['cluster'] == 0].shape[0]) * 100
+perNI2 = (X[(X['cluster'] == 1) & (X['Night'] == 1)].shape[0] / X[X['cluster'] == 1].shape[0]) * 100
+perNI3 = (X[(X['cluster'] == 2) & (X['Night'] == 1)].shape[0] / X[X['cluster'] == 2].shape[0]) * 100
+
+print(f"Percentage of night trips in Cluster 1: {perNI1:.2f}%")
+print(f"Percentage of night trips in Cluster 2: {perNI2:.2f}%")
+print(f"Percentage of night trips in Cluster 3: {perNI3:.2f}%")
+
 
 
 
