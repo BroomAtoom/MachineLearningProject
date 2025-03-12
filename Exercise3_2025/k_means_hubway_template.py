@@ -234,45 +234,51 @@ plt.show()
 #Based on part C provide the analysis of results as asked below.
 # NOTE: use org_X in order to be able easily relate to the original values of the features 
 
+# Apply KMeans from sklearn
+kmeans = KMeans(n_clusters=3, random_state=1)
+X['cluster'] = kmeans.fit_predict(X)
 
+# Now you can access the 'cluster' column in Part D
 
 # !!!!!! ANSWER THE QUESTIONS BELOW  AND PRINT THE OUTPUTS !!!!!!
 # What percentage of the data is assigned to each cluster? 
 # What percentage of the data is assigned to each cluster?
-cluster1per = (X[X['cluster'] == 0].shape[0] / X.shape[0]) * 100
-cluster2per = (X[X['cluster'] == 1].shape[0] / X.shape[0]) * 100
-cluster3per = (X[X['cluster'] == 2].shape[0] / X.shape[0]) * 100
+# Use org_X for analysis to keep the original columns
+cluster1per = (org_X[org_X['cluster'] == 0].shape[0] / org_X.shape[0]) * 100
+cluster2per = (org_X[org_X['cluster'] == 1].shape[0] / org_X.shape[0]) * 100
+cluster3per = (org_X[org_X['cluster'] == 2].shape[0] / org_X.shape[0]) * 100
 
 print(f"Cluster 1: {cluster1per:.2f}%")
 print(f"Cluster 2: {cluster2per:.2f}%")
 print(f"Cluster 3: {cluster3per:.2f}%")
 
 # Average trip duration in each cluster
-avgDuration1 = X[X['cluster'] == 0]['Duration'].mean()
-avgDuration2 = X[X['cluster'] == 1]['Duration'].mean()
-avgDuration3 = X[X['cluster'] == 2]['Duration'].mean()
+avgDuration1 = org_X[org_X['cluster'] == 0]['Duration'].mean()
+avgDuration2 = org_X[org_X['cluster'] == 1]['Duration'].mean()
+avgDuration3 = org_X[org_X['cluster'] == 2]['Duration'].mean()
 
 print(f"Average Duration in Cluster 1: {avgDuration1:.2f}")
 print(f"Average Duration in Cluster 2: {avgDuration2:.2f}")
 print(f"Average Duration in Cluster 3: {avgDuration3:.2f}")
 
 # The percentage of trips made by people above 50 years old in each cluster
-perAge50_1 = (X[(X['cluster'] == 0) & (X['Age'] > 50)].shape[0] / X[X['cluster'] == 0].shape[0]) * 100
-perAge50_2 = (X[(X['cluster'] == 1) & (X['Age'] > 50)].shape[0] / X[X['cluster'] == 1].shape[0]) * 100
-perAge50_3 = (X[(X['cluster'] == 2) & (X['Age'] > 50)].shape[0] / X[X['cluster'] == 2].shape[0]) * 100
+perAge50_1 = (org_X[(org_X['cluster'] == 0) & (org_X['Age'] > 50)].shape[0] / org_X[org_X['cluster'] == 0].shape[0]) * 100
+perAge50_2 = (org_X[(org_X['cluster'] == 1) & (org_X['Age'] > 50)].shape[0] / org_X[org_X['cluster'] == 1].shape[0]) * 100
+perAge50_3 = (org_X[(org_X['cluster'] == 2) & (org_X['Age'] > 50)].shape[0] / org_X[org_X['cluster'] == 2].shape[0]) * 100
 
 print(f"Percentage of people above 50 in Cluster 1: {perAge50_1:.2f}%")
 print(f"Percentage of people above 50 in Cluster 2: {perAge50_2:.2f}%")
 print(f"Percentage of people above 50 in Cluster 3: {perAge50_3:.2f}%")
 
 # The percentage of trips made at night in each cluster
-perNI1 = (X[(X['cluster'] == 0) & (X['Night'] == 1)].shape[0] / X[X['cluster'] == 0].shape[0]) * 100
-perNI2 = (X[(X['cluster'] == 1) & (X['Night'] == 1)].shape[0] / X[X['cluster'] == 1].shape[0]) * 100
-perNI3 = (X[(X['cluster'] == 2) & (X['Night'] == 1)].shape[0] / X[X['cluster'] == 2].shape[0]) * 100
+perNI1 = (org_X[(org_X['cluster'] == 0) & (org_X['Night'] == 1)].shape[0] / org_X[org_X['cluster'] == 0].shape[0]) * 100
+perNI2 = (org_X[(org_X['cluster'] == 1) & (org_X['Night'] == 1)].shape[0] / org_X[org_X['cluster'] == 1].shape[0]) * 100
+perNI3 = (org_X[(org_X['cluster'] == 2) & (org_X['Night'] == 1)].shape[0] / org_X[org_X['cluster'] == 2].shape[0]) * 100
 
 print(f"Percentage of night trips in Cluster 1: {perNI1:.2f}%")
 print(f"Percentage of night trips in Cluster 2: {perNI2:.2f}%")
 print(f"Percentage of night trips in Cluster 3: {perNI3:.2f}%")
+
 
 
 
