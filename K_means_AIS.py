@@ -10,8 +10,8 @@ Created on Wed Mar 12 11:16:39 2025
 import os
 import csv
 
-# Define the folder containing the CSV files
-folder_path = "/raw_data_rotterdam/CVS_files"
+# Define the folder path relative to the script's working directory
+folder_path = os.path.join(os.getcwd(), "raw_data_rotterdam", "CVS_files")
 
 # Dictionary to store AIS data by ship
 ais_data = {}
@@ -25,13 +25,13 @@ for file_name in os.listdir(folder_path):
             reader = csv.DictReader(file)
             
             for row in reader:
-                ship_name = row["vessel.name"]
+                ship_name = row["vessel.name"].strip()
                 
                 # Initialize the ship's entry if not present
                 if ship_name not in ais_data:
                     ais_data[ship_name] = []
                 
-                # Add the row data, converting appropriate fields
+                # Store AIS data for this ship
                 ais_data[ship_name].append({
                     "draught": float(row["navigation.draught"]),
                     "time": row["navigation.time"],
@@ -48,5 +48,10 @@ for file_name in os.listdir(folder_path):
                     "type": row["vessel.type"]
                 })
 
+# Print an example of the structured data
+for ship, records in ais_data.items():
+    print(f"Ship: {ship}, Number of records: {len(records)}")
+    print(records[:2])  # Print first two records for preview
+    break  # Just to limit output
+
 # Now, `ais_data` contains all AIS data organized by ship name
-print(ais_data)
