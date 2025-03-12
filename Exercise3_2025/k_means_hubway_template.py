@@ -75,7 +75,7 @@ X = (X - X.mean()) / X.std()
 print(X.head()) # Prints the first 5 rows of the DataFrame
 
 
-# %% ========= PART A: Apply the K-means Algorithm step by step ====== #
+#  ========= PART A: Apply the K-means Algorithm step by step ====== #
 
 # Select the number of clusters #
 # Here we selected three to proceed. Normally you need to decide on it through some analysis.   
@@ -187,7 +187,7 @@ plt.show()
 # END OF PART A #
 
 
-# %% =========== PART B: Use sklearn package      =========== #
+#  =========== PART B: Use sklearn package      =========== #
 # =========== Decide on the number of clusters =========== #
 
 # !!!! IMPLEMENT the missing parts for using the elbow method !!!!
@@ -214,7 +214,7 @@ plt.show()
 # END OF PART B #
 
 
-# %% =========== PART C: Use sklearn package     =========== #
+#  =========== PART C: Use sklearn package     =========== #
 # =========== Apply K-means                    =========== #
 
 # !!!! IMPLEMENT  the k-means algorithm on the data set with 3 clusters =========== #
@@ -230,7 +230,7 @@ plt.show()
 
 # END OF PART C #
 
-# %% ======== PART D: RESULTS ANALYSIS ===============#
+#  ======== PART D: RESULTS ANALYSIS ===============#
 #Based on part C provide the analysis of results as asked below.
 # NOTE: use org_X in order to be able easily relate to the original values of the features 
 
