@@ -15,6 +15,7 @@ import psutil
 import joblib
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 from collections import Counter
 from sklearn import preprocessing
@@ -28,7 +29,7 @@ start_training_time = time.time()
 warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
 # Set a random seed for reproducibility
-random_seed = 504
+random_seed = 19
 np.random.seed(random_seed)
 
 # Create the 'models' folder if it doesn't exist
@@ -260,7 +261,7 @@ match learning_type:
         print("")
 
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(600,),  # Example with 10 neurons
+        train_nn = MLPClassifier(hidden_layer_sizes=(550,),  # Example with 600 neurons
                                  activation='relu',
                                  solver='adam',
                                  max_iter=300,  # One iteration per epoch
@@ -271,9 +272,11 @@ match learning_type:
         best_val_accuracy = 0.0
         best_model = None
         epoch_times = []  # To store the time taken for each epoch
+        val_accuracies = []  # To store validation accuracies for each epoch
+        test_accuracies = []  # To store test accuracies for each epoch
 
         # Maximum number of epochs
-        max_epochs = 150
+        max_epochs = 100
         for epoch in range(max_epochs):
             start_time = time.time()  # Record the start time for the epoch
             print(f"\nEpoch {epoch+1}/{max_epochs}")
@@ -289,6 +292,10 @@ match learning_type:
 
             print(f"Validation Accuracy: {accuracy_val * 100:.2f}%")
             print(f"Test Accuracy: {accuracy_test * 100:.2f}%")
+
+            # Store accuracies for plotting
+            val_accuracies.append(accuracy_val)
+            test_accuracies.append(accuracy_test)
 
             # Check if the current model is better than the previous best model
             if accuracy_val > best_val_accuracy:
@@ -341,6 +348,19 @@ match learning_type:
                 f.write(f"Train Percentage: {train_split / total_files * 100:.2f}%\n")
                 f.write(f"Test Percentage: {(test_split - train_split) / total_files * 100:.2f}%\n")
                 f.write(f"Validation Percentage: {(total_files - test_split) / total_files * 100:.2f}%\n")
+                # Write the navigation status counts for each set
+                f.write(f"\nNavigation status counts for training set:\n")
+                for status, count in train_status_counts.items():
+                    f.write(f"{status}: {count}\n")
+            
+                f.write(f"\nNavigation status counts for testing set:\n")
+                for status, count in test_status_counts.items():
+                    f.write(f"{status}: {count}\n")
+            
+                f.write(f"\nNavigation status counts for validation set:\n")
+                for status, count in val_status_counts.items():
+                    f.write(f"{status}: {count}\n")
+
                 f.write(f"\nMLPClassifier Parameters:\n")
                 f.write(f"Hidden Layer Sizes: {train_nn.hidden_layer_sizes}\n")
                 f.write(f"Activation: '{train_nn.activation}'\n")
@@ -355,6 +375,26 @@ match learning_type:
             print(f"\nDetails written to {txt_filename}")
         else:
             print("No model was saved because no improvement in validation accuracy was found.")
+
+        # Plot the validation and test accuracies over epochs
+        plt.figure(figsize=(10, 6))
+        plt.plot(range(1, max_epochs + 1), val_accuracies, label='Validation Accuracy', color='blue')
+        plt.plot(range(1, max_epochs + 1), test_accuracies, label='Test Accuracy', color='green')
+        plt.xlabel('Epoch')
+        plt.ylabel('Accuracy')
+        plt.title('Validation and Test Accuracy per Epoch')
+        plt.legend()
+        plt.grid(True)
+        plt.show()
+
+        # Plot the time taken for each epoch
+        plt.figure(figsize=(10, 6))
+        plt.plot(range(1, max_epochs + 1), epoch_times, label='Time per Epoch', color='red')
+        plt.xlabel('Epoch')
+        plt.ylabel('Time (seconds)')
+        plt.title('Time Taken per Epoch')
+        plt.grid(True)
+        plt.show()
 
             
 
