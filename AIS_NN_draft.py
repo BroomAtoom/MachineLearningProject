@@ -114,7 +114,6 @@ for status, count in val_status_counts.items():
     print(f"{status}: {count}")    
     
 
-
 # Function to filter data based on navigation status
 def filter_navigation_status(ais_data_dict, statuses):
     filtered_data = {}
@@ -156,6 +155,57 @@ print("")
 for i in range(len(navigation_status_entry)):
     print("Data filterd for:", navigation_status_entry[i])
     
+# Define a mapping for the navigation statuses
+navigation_status_mapping = {
+    'under-way-using-engine': 0,
+    'moored': 1,
+    'fishing': 2
+}
+
+# Function to extract data and create a matrix
+def create_matrix(ais_data_dict):
+    matrix_data = []
+    
+    # Loop through each file in ais_data_dict
+    for filename, file_data in ais_data_dict.items():
+        # Loop through each entry in the "data" list
+        if 'data' in file_data:
+            for entry in file_data['data']:
+                # Ensure "navigation" and "location" keys exist
+                if 'navigation' in entry and 'location' in entry['navigation']:
+                    # Extract speed, latitude, and longitude
+                    speed = entry['navigation'].get('speed', 0)  # Default to 0 if no speed
+                    lat = entry['navigation']['location'].get('lat', 0)  # Default to 0 if no latitude
+                    long = entry['navigation']['location'].get('long', 0)  # Default to 0 if no longitude
+                    
+                    # Extract navigation status and map it to the value
+                    nav_status = entry['navigation'].get('status', '')
+                    navigation_status = navigation_status_mapping.get(nav_status, -1)  # -1 if status is unknown
+                    
+                    # Append to the matrix
+                    matrix_data.append([long, lat, speed, navigation_status])
+    
+    # Convert the matrix data to a NumPy array for easier manipulation
+    return np.array(matrix_data)
+
+# Create the matrices for train, test, and validation sets
+AIS_data_train_matrix = create_matrix(AIS_data_train_filtered)
+AIS_data_test_matrix = create_matrix(AIS_data_test_filtered)
+AIS_data_val_matrix = create_matrix(AIS_data_val_filtered)
+
+# Print the matrices (or their shapes)
+print("Training set matrix shape:", AIS_data_train_matrix.shape)
+print("Testing set matrix shape:", AIS_data_test_matrix.shape)
+print("Validation set matrix shape:", AIS_data_val_matrix.shape)
+
+# Optionally, convert to DataFrame for better readability
+AIS_data_train_df = pd.DataFrame(AIS_data_train_matrix, columns=["long", "lat", "speed", "navigation_status"])
+AIS_data_test_df = pd.DataFrame(AIS_data_test_matrix, columns=["long", "lat", "speed", "navigation_status"])
+AIS_data_val_df = pd.DataFrame(AIS_data_val_matrix, columns=["long", "lat", "speed", "navigation_status"])
+
+#Do matrix splitting for sklearn 
+
+
 
 
     
