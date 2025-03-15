@@ -23,7 +23,18 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.exceptions import ConvergenceWarning
 
+start_training_time = time.time()
+
 warnings.filterwarnings("ignore", category=ConvergenceWarning)
+
+# Set a random seed for reproducibility
+random_seed = 777
+np.random.seed(random_seed)
+
+# Create the 'models' folder if it doesn't exist
+model_dir = 'models'
+if not os.path.exists(model_dir):
+    os.makedirs(model_dir)
 
 def memory_usage():
     """Returns memory usage in MB"""
@@ -34,6 +45,7 @@ def memory_usage():
 print("Importing finished")
 print("")
 print("Loading data...")
+
 #DATA processing:
     
 # Define the list of desired navigation statuses
@@ -67,8 +79,8 @@ np.random.shuffle(file_keys)
 
 # Compute split indices
 total_files = len(file_keys)
-train_split = int(0.65 * total_files)
-test_split = int(0.85 * total_files)  # 60% train + 20% test = 80%
+train_split = int(0.60 * total_files)
+test_split = int(0.80 * total_files)  # 60% train + 20% test = 80%
 
 # Split the data
 AIS_data_train = {key: ais_data_dict[key] for key in file_keys[:train_split]}
@@ -230,9 +242,9 @@ x_train = AIS_data_train_matrix[:,:3]
 x_test = AIS_data_test_matrix[:,:3]
 x_val = AIS_data_val_matrix[:,:3]
 
-y_train = AIS_data_train_matrix[:, 3:]
-y_test = AIS_data_test_matrix[:, 3:]
-y_val = AIS_data_val_matrix[:, 3:]
+y_train = AIS_data_train_matrix[:, 3:].ravel()
+y_test = AIS_data_test_matrix[:, 3:].ravel()
+y_val = AIS_data_val_matrix[:, 3:].ravel()
 
 print("")
 print("Matrices created for Sklearn")
@@ -246,21 +258,22 @@ match learning_type:
     case 'sklearn':
         print('Sklearn is being used...')
         print("")
-        
+
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(100,),  # Example with 100 neurons
-                                 activation='relu',
+        train_nn = MLPClassifier(hidden_layer_sizes=(50,),  # Example with 10 neurons
+                                 activation='tanh',
                                  solver='adam',
-                                 max_iter=5,  # We want to run one iteration at a time
+                                 max_iter=20,  # One iteration per epoch
                                  warm_start=True,  # Keeps the previous model state to continue from last fit
-                                 random_state=0)
+                                 random_state=random_seed)
+
         # Initialize best validation accuracy and best model
         best_val_accuracy = 0.0
         best_model = None
         epoch_times = []  # To store the time taken for each epoch
 
-        # Iterate over epochs manually
-        max_epochs = 10
+        # Maximum number of epochs
+        max_epochs = 50
         for epoch in range(max_epochs):
             start_time = time.time()  # Record the start time for the epoch
             print(f"\nEpoch {epoch+1}/{max_epochs}")
@@ -283,10 +296,6 @@ match learning_type:
                 best_model = train_nn  # Save the current model as the best model
                 print(f"New best model found! Validation Accuracy: {accuracy_val * 100:.2f}%")
 
-            # Calculate memory usage
-            current_memory = memory_usage()
-            print(f"Memory usage after epoch {epoch+1}: {current_memory:.2f} MB")
-
             # Record the end time for the epoch
             end_time = time.time()
             epoch_duration = end_time - start_time  # Duration of the current epoch in seconds
@@ -303,16 +312,48 @@ match learning_type:
             print(f"Time taken for epoch {epoch+1}: {epoch_duration:.2f} seconds")
             print(f"Estimated remaining time: {remaining_time:.2f} minutes")
 
-        # After training, save the best model
+        # After training, save the best model with accuracy in the filename
         if best_model is not None:
-            model_filename = 'AIS_first_model.joblib'
+            # Use test accuracy for final model filename
+            accuracy_test_str = f"{accuracy_test * 100:.2f}"  # Use test accuracy instead of validation accuracy
+
+            # Create a filename that includes the test accuracy
+            model_filename = os.path.join(model_dir, f'AIS_first_model_accuracy_{accuracy_test_str}%.joblib')
+            
+            # Save the model
             joblib.dump(best_model, model_filename)
             print(f"Best model saved to {model_filename}")
+
+            # Capture the end time after the model is saved
+            end_training_time = time.time()
+            
+            # Calculate the total time taken for training and saving the model
+            total_training_time = (end_training_time - start_training_time) / 60  # Convert to minutes
+
+            # Create the text file with model details
+            txt_filename = os.path.join(model_dir, f'AIS_first_model_accuracy_{accuracy_test_str}%.txt')
+            with open(txt_filename, "w") as f:
+                f.write(f"Random Seed: {random_seed}\n")
+                f.write(f"Navigation Status Entries: {navigation_status_entry}\n")
+                f.write(f"Train Percentage: {train_split / total_files * 100:.2f}%\n")
+                f.write(f"Test Percentage: {(test_split - train_split) / total_files * 100:.2f}%\n")
+                f.write(f"Validation Percentage: {(total_files - test_split) / total_files * 100:.2f}%\n")
+                f.write(f"\nMLPClassifier Parameters:\n")
+                f.write(f"Hidden Layer Sizes: {train_nn.hidden_layer_sizes}\n")
+                f.write(f"Activation: '{train_nn.activation}'\n")
+                f.write(f"Solver: '{train_nn.solver}'\n")
+                f.write(f"Max Iter: {train_nn.max_iter}\n")
+                f.write(f"Warm Start: {train_nn.warm_start}\n")
+                f.write(f"Random State: {train_nn.random_state}\n")
+                f.write(f"\nMax Epochs: {max_epochs}\n")
+                f.write(f"Model Accuracy: {accuracy_test * 100:.2f}%\n")
+                f.write(f"Total Time Taken: {total_training_time:.2f} minutes\n")
+
+            print(f"\nDetails written to {txt_filename}")
         else:
             print("No model was saved because no improvement in validation accuracy was found.")
-
-
-
+        
+            
 
 
 
