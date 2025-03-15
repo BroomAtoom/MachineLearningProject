@@ -14,9 +14,10 @@ from collections import Counter
 
 #DATA processing:
     
-navigation_status_entry= ['under-way-using-engine',
-                          'moored',
-                          'fishing']
+# Define the list of desired navigation statuses
+navigation_status_entry = ['under-way-using-engine', 
+                           'moored', 
+                           'fishing']
 
     
 # Get the directory of the Python script
@@ -112,6 +113,50 @@ print("\nNavigation status counts for validation set:")
 for status, count in val_status_counts.items():
     print(f"{status}: {count}")    
     
+
+
+# Function to filter data based on navigation status
+def filter_navigation_status(ais_data_dict, statuses):
+    filtered_data = {}
+    
+    # Loop through each file in ais_data_dict
+    for filename, file_data in ais_data_dict.items():
+        # Create a new list to hold filtered entries for this file
+        filtered_entries = []
+        
+        # Loop through each entry in the "data" list
+        if 'data' in file_data:
+            for entry in file_data['data']:
+                # Ensure "navigation" and "status" keys exist
+                if 'navigation' in entry and 'status' in entry['navigation']:
+                    # Check if the status is in the list of desired statuses
+                    if entry['navigation']['status'] in statuses:
+                        filtered_entries.append(entry)
+        
+        # Store the filtered entries in the dictionary
+        filtered_data[filename] = {
+            'data': filtered_entries
+        }
+    
+    return filtered_data
+
+# Filter data for train, test, and validation sets
+AIS_data_train_filtered = filter_navigation_status(AIS_data_train, navigation_status_entry)
+AIS_data_test_filtered = filter_navigation_status(AIS_data_test, navigation_status_entry)
+AIS_data_val_filtered = filter_navigation_status(AIS_data_val, navigation_status_entry)
+
+# You can print the filtered data count for verification
+print("")
+print("Filtering data...")
+print("")
+print(f"Filtered training data count: {sum(len(file_data['data']) for file_data in AIS_data_train_filtered.values())}")
+print(f"Filtered testing data count: {sum(len(file_data['data']) for file_data in AIS_data_test_filtered.values())}")
+print(f"Filtered validation data count: {sum(len(file_data['data']) for file_data in AIS_data_val_filtered.values())}")
+print("")
+for i in range(len(navigation_status_entry)):
+    print("Data filterd for:", navigation_status_entry[i])
+    
+
 
     
     
