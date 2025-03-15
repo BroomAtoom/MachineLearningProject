@@ -261,10 +261,10 @@ match learning_type:
         print("")
 
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(550,),  # Example with 600 neurons
+        train_nn = MLPClassifier(hidden_layer_sizes=(400,),  # Example with 600 neurons
                                  activation='relu',
                                  solver='adam',
-                                 max_iter=300,  # One iteration per epoch
+                                 max_iter=250,  # One iteration per epoch
                                  warm_start=True,  # Keeps the previous model state to continue from last fit
                                  random_state=random_seed)
 
@@ -276,7 +276,7 @@ match learning_type:
         test_accuracies = []  # To store test accuracies for each epoch
 
         # Maximum number of epochs
-        max_epochs = 100
+        max_epochs = 200
         for epoch in range(max_epochs):
             start_time = time.time()  # Record the start time for the epoch
             print(f"\nEpoch {epoch+1}/{max_epochs}")
