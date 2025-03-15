@@ -28,7 +28,7 @@ start_training_time = time.time()
 warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
 # Set a random seed for reproducibility
-random_seed = 777
+random_seed = 504
 np.random.seed(random_seed)
 
 # Create the 'models' folder if it doesn't exist
@@ -260,10 +260,10 @@ match learning_type:
         print("")
 
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(50,),  # Example with 10 neurons
-                                 activation='tanh',
+        train_nn = MLPClassifier(hidden_layer_sizes=(600,),  # Example with 10 neurons
+                                 activation='relu',
                                  solver='adam',
-                                 max_iter=20,  # One iteration per epoch
+                                 max_iter=300,  # One iteration per epoch
                                  warm_start=True,  # Keeps the previous model state to continue from last fit
                                  random_state=random_seed)
 
@@ -273,7 +273,7 @@ match learning_type:
         epoch_times = []  # To store the time taken for each epoch
 
         # Maximum number of epochs
-        max_epochs = 50
+        max_epochs = 150
         for epoch in range(max_epochs):
             start_time = time.time()  # Record the start time for the epoch
             print(f"\nEpoch {epoch+1}/{max_epochs}")
@@ -301,13 +301,16 @@ match learning_type:
             epoch_duration = end_time - start_time  # Duration of the current epoch in seconds
             epoch_times.append(epoch_duration)
 
-            # Calculate the average time per epoch
+            # Calculate the average time per epoch based on previous epochs
             avg_epoch_time = np.mean(epoch_times)
 
-            # Estimate remaining time
+            # Estimate remaining time using the average epoch time
             remaining_epochs = max_epochs - (epoch + 1)
-            remaining_time = (remaining_epochs * avg_epoch_time) / 60
-
+            remaining_time = (remaining_epochs * avg_epoch_time) / 60  # In minutes
+            
+            # Calculate memory usage
+            current_memory = memory_usage()
+            print(f"Memory usage after epoch {epoch+1}: {current_memory:.2f} MB")
             # Print the remaining time in a readable format
             print(f"Time taken for epoch {epoch+1}: {epoch_duration:.2f} seconds")
             print(f"Estimated remaining time: {remaining_time:.2f} minutes")
@@ -352,7 +355,7 @@ match learning_type:
             print(f"\nDetails written to {txt_filename}")
         else:
             print("No model was saved because no improvement in validation accuracy was found.")
-        
+
             
 
 
