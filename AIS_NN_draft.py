@@ -508,10 +508,10 @@ match learning_type:
         print("")
 
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(10,),  # Example with 600 neurons
+        train_nn = MLPClassifier(hidden_layer_sizes=(100,),  # Example with 600 neurons
                                  activation='relu',
                                  solver='adam',
-                                 max_iter=1,  # One iteration per epoch
+                                 max_iter=20,  # One iteration per epoch
                                  warm_start=True,  # Keeps the previous model state to continue from last fit
                                  random_state=random_seed)
 
