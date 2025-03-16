@@ -95,6 +95,9 @@ navigation_status_mapping_full = {
     'aground': 6,
     'fishing': 7,
     'under-way-sailing': 8,
+    'reserved code': 9,
+    'towing': 10,
+    'search and rescue': 14,
     'undefined': 15
 }    
 
