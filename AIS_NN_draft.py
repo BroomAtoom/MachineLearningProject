@@ -37,8 +37,26 @@ start_training_time = time.time()                               #Start time to t
 warnings.filterwarnings("ignore", category=ConvergenceWarning)  #Disable iter=1 warning in Sklearn
 
 # Set a random seed for reproducibility
-random_seed = 2
+random_seed = 10
 np.random.seed(random_seed)
+
+# Wich data to train? 'JSON', 'CSV', or 'Both'
+data_type = 'CSV'
+
+match data_type:
+    case 'JSON':
+        print("")
+        print("Using: JSON data")
+        print("")
+    case 'CSV':
+        print("")
+        print("Using: CSV data")
+        print("")
+    case 'Both':
+        print("")
+        print("Using: JSON and CSV data")
+        print("")
+        
 
 # Create the 'models' folder if it doesn't exist
 model_dir = 'models'
@@ -167,6 +185,7 @@ for filename, data in csv_data.items():
             CSV_data_filtered[filename] = {
                 key: np.array(values)[mask].tolist() for key, values in data.items()
             }
+        print("Filtering iteration done!")
 
 print("Filtering complete!")
 print("Splitting CSV data...")
@@ -348,6 +367,8 @@ for i in range(len(navigation_status_entry)):
 
 
 #-------------------- CREATING TRAIN, TEST AND VALIDATION MATRICES ----------------
+print("")
+print("Creating matrices from", data_type, "for Sklearn...")
 
 # Function to extract data and create a matrix for JSON files
 def create_matrix(ais_data_dict):
@@ -400,44 +421,86 @@ def create_matrix_from_csv(CSV_data_dict):
     # Convert the matrix data to a NumPy array for easier manipulation
     return np.array(matrix_data)
 
+# # Optionally, convert to DataFrame for better readability
+# AIS_data_train_df = pd.DataFrame(AIS_data_train_matrix, columns=["long", "lat", "speed", "navigation_status"])
+# AIS_data_test_df = pd.DataFrame(AIS_data_test_matrix, columns=["long", "lat", "speed", "navigation_status"])
+# AIS_data_val_df = pd.DataFrame(AIS_data_val_matrix, columns=["long", "lat", "speed", "navigation_status"])
 
-#Create matrices from CSV data
-CSV_AIS_data_train_matrix = create_matrix_from_csv(CSV_data_train)
-CSV_AIS_data_test_matrix = create_matrix_from_csv(CSV_data_test)
-CSV_AIS_data_val_matrix = create_matrix_from_csv(CSV_data_val)
 
+match data_type:
+    case 'JSON':
+        # Create the matrices for train, test, and validation sets
+        AIS_data_train_matrix = create_matrix(AIS_data_train_filtered)
+        AIS_data_test_matrix = create_matrix(AIS_data_test_filtered)
+        AIS_data_val_matrix = create_matrix(AIS_data_val_filtered)
+        
+        print("Training set matrix shape JSON data:", AIS_data_train_matrix.shape)
+        print("Testing set matrix shape JSON data:", AIS_data_test_matrix.shape)
+        print("Validation set matrix shape JSON data:", AIS_data_val_matrix.shape)
+        
+        #Do matrix splitting for sklearn 
+        x_train = AIS_data_train_matrix[:,:3]
+        x_test = AIS_data_test_matrix[:,:3]
+        x_val = AIS_data_val_matrix[:,:3]
+        
+        y_train = AIS_data_train_matrix[:, 3:].ravel()
+        y_test = AIS_data_test_matrix[:, 3:].ravel()
+        y_val = AIS_data_val_matrix[:, 3:].ravel()
+        
+        print("")
+        print("Matrices created for Sklearn with JSON data")
+        print("")
+        
+    case 'CSV':
+        #Do matrix splitting for sklearn
+        print("Creating X_train...")
+        CSV_AIS_data_train_matrix = create_matrix_from_csv(CSV_data_train)
+        x_train = CSV_AIS_data_train_matrix[:,:3]
+        print("     X_train created!")
+        print("Creating X_test...")
+        CSV_AIS_data_test_matrix = create_matrix_from_csv(CSV_data_test)
+        x_test = CSV_AIS_data_test_matrix[:,:3]
+        print("     X_test created!")
+        print("Creating X_val...")
+        CSV_AIS_data_val_matrix = create_matrix_from_csv(CSV_data_val)
+        x_val = CSV_AIS_data_val_matrix[:,:3]
+        print("     X_val created!")
+        
+        print("Training set matrix shape CSV data:", CSV_AIS_data_train_matrix.shape)
+        print("Testing set matrix shape CSV data:", CSV_AIS_data_test_matrix.shape)
+        print("Validation set matrix shape CSV data:", CSV_AIS_data_val_matrix.shape)
 
-# Create the matrices for train, test, and validation sets
-AIS_data_train_matrix = create_matrix(AIS_data_train_filtered)
-AIS_data_test_matrix = create_matrix(AIS_data_test_filtered)
-AIS_data_val_matrix = create_matrix(AIS_data_val_filtered)
-
-# Print the matrices (or their shapes)
-print("Training set matrix shape:", AIS_data_train_matrix.shape)
-print("Testing set matrix shape:", AIS_data_test_matrix.shape)
-print("Validation set matrix shape:", AIS_data_val_matrix.shape)
-
-# Optionally, convert to DataFrame for better readability
-AIS_data_train_df = pd.DataFrame(AIS_data_train_matrix, columns=["long", "lat", "speed", "navigation_status"])
-AIS_data_test_df = pd.DataFrame(AIS_data_test_matrix, columns=["long", "lat", "speed", "navigation_status"])
-AIS_data_val_df = pd.DataFrame(AIS_data_val_matrix, columns=["long", "lat", "speed", "navigation_status"])
-
-#Do matrix splitting for sklearn 
-x_train = AIS_data_train_matrix[:,:3]
-x_test = AIS_data_test_matrix[:,:3]
-x_val = AIS_data_val_matrix[:,:3]
-
-y_train = AIS_data_train_matrix[:, 3:].ravel()
-y_test = AIS_data_test_matrix[:, 3:].ravel()
-y_val = AIS_data_val_matrix[:, 3:].ravel()
-
-print("")
-print("Matrices created for Sklearn")
-print("")
+        y_train = CSV_AIS_data_train_matrix[:, 3:].ravel()
+        y_test = CSV_AIS_data_test_matrix[:, 3:].ravel()
+        y_val = CSV_AIS_data_val_matrix[:, 3:].ravel()
+        
+        print("")
+        print("Matrices created for Sklearn with CSV data")
+        print("")
+    # case 'Both':
+    #     print("Training set matrix shape JSON data:", AIS_data_train_matrix.shape)
+    #     print("Testing set matrix shape JSON data:", AIS_data_test_matrix.shape)
+    #     print("Validation set matrix shape JSON data:", AIS_data_val_matrix.shape)
+    #     print("")
+    #     print("Training set matrix shape CSV data:", CSV_AIS_data_train_matrix.shape)
+    #     print("Testing set matrix shape CSV data:", CSV_AIS_data_test_matrix.shape)
+    #     print("Validation set matrix shape CSV data:", CSV_AIS_data_val_matrix.shape)
+        
+    #     #Do matrix splitting for sklearn 
+    #     x_train = np.vstack((CSV_AIS_data_train_matrix[:,:3],AIS_data_train_matrix[:,:3]))
+    #     x_test = np.vstack((CSV_AIS_data_test_matrix[:,:3],AIS_data_test_matrix[:,:3]))
+    #     x_val = np.vstack((CSV_AIS_data_val_matrix[:,:3],AIS_data_val_matrix[:,:3]))
+        
+    #     # y_train = np.vstack((CSV_AIS_data_train_matrix[:, 3:].ravel(),AIS_data_train_matrix[:, 3:].ravel())) 
+    #     # y_test = np.vstack((CSV_AIS_data_test_matrix[:, 3:].ravel(),AIS_data_test_matrix[:, 3:].ravel())) 
+    #     # y_val = np.vstack((CSV_AIS_data_val_matrix[:, 3:].ravel(),AIS_data_val_matrix[:, 3:].ravel())) 
+    #     print("")
+    #     print("Matrices created for Sklearn with JSON and CVS data")
+    #     print("")
 
 #------------------ MACHINE LEARNING ----------------------------------
 
-learning_type = 'none'
+learning_type = 'sklearn'
 
 match learning_type:
     case 'sklearn':
@@ -445,10 +508,10 @@ match learning_type:
         print("")
 
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(450,),  # Example with 600 neurons
+        train_nn = MLPClassifier(hidden_layer_sizes=(10,),  # Example with 600 neurons
                                  activation='relu',
                                  solver='adam',
-                                 max_iter=100,  # One iteration per epoch
+                                 max_iter=1,  # One iteration per epoch
                                  warm_start=True,  # Keeps the previous model state to continue from last fit
                                  random_state=random_seed)
 
@@ -512,7 +575,7 @@ match learning_type:
             accuracy_test_str = f"{accuracy_test * 100:.2f}"  # Use test accuracy instead of validation accuracy
 
             # Create a filename that includes the test accuracy
-            model_filename = os.path.join(model_dir, f'AIS_first_model_accuracy_{accuracy_test_str}%.joblib')
+            model_filename = os.path.join(model_dir, f'{data_type}_AIS_first_model_accuracy_{accuracy_test_str}%.joblib')
             
             # Save the model
             joblib.dump(best_model, model_filename)
@@ -525,14 +588,16 @@ match learning_type:
             total_training_time = (end_training_time - start_training_time) / 60  # Convert to minutes
 
             # Create the text file with model details
-            txt_filename = os.path.join(model_dir, f'AIS_first_model_accuracy_{accuracy_test_str}%.txt')
+            txt_filename = os.path.join(model_dir, f'{data_type}_AIS_first_model_accuracy_{accuracy_test_str}%.txt')
             with open(txt_filename, "w") as f:
+                f.write(f"Data used: {data_type}\n")
                 f.write(f"Random Seed: {random_seed}\n")
                 f.write(f"Navigation Status Entries: {navigation_status_entry}\n")
                 f.write(f"Train Percentage: {train_split / total_files * 100:.2f}%\n")
                 f.write(f"Test Percentage: {(test_split - train_split) / total_files * 100:.2f}%\n")
                 f.write(f"Validation Percentage: {(total_files - test_split) / total_files * 100:.2f}%\n")
                 f.write(f"\nNavigation status counts for training set:\n")
+            
                 for status, count in train_status_counts.items():
                     f.write(f"{status}: {count}\n")
             
