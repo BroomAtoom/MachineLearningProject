@@ -28,9 +28,12 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.exceptions import ConvergenceWarning
 
-start_training_time = time.time()
+#------------------ INITIAL CODE----------------------------------
 
-warnings.filterwarnings("ignore", category=ConvergenceWarning)
+
+start_training_time = time.time()                               #Start time to track total run time
+
+warnings.filterwarnings("ignore", category=ConvergenceWarning)  #Disable iter=1 warning in Sklearn
 
 # Set a random seed for reproducibility
 random_seed = 2
@@ -41,11 +44,45 @@ model_dir = 'models'
 if not os.path.exists(model_dir):
     os.makedirs(model_dir)
 
+# Make function to track memory usage (used in the Machine Learning part)
 def memory_usage():
     """Returns memory usage in MB"""
     process = psutil.Process(os.getpid())
     memory_info = process.memory_info()
     return memory_info.rss / 1024 / 1024  # Convert bytes to MB
+
+#------------------ NAV MAPPING ----------------------------------
+
+# Define the list of desired navigation statuses
+navigation_status_entry = ['under-way-using-engine', 
+                           'moored', 
+                           'fishing']
+
+        
+# Define a mapping for the navigation statuses
+navigation_status_mapping = {
+    'under-way-using-engine': 0,
+    'moored': 1,
+    'fishing': 2
+}
+
+# Full nav enconding (https://coast.noaa.gov/data/marinecadastre/ais/data-dictionary.pdf)
+navigation_status_mapping_full = {
+    'under-way-using-engine': 0,
+    'anchored': 1,
+    'Not under command': 2,
+    'Has restricted maneuverability': 3,
+    'Ship draught is limiting its movement': 4,
+    'moored': 5,
+    'aground': 6,
+    'fishing': 7,
+    'under-way-sailing': 8,
+    'undefined': 15
+}    
+
+
+
+#------------------ DATA PROCESSING ----------------------------------
 
 print("Importing finished")
 print("")
@@ -53,10 +90,15 @@ print("Loading data...")
 print("Loading CVS files...")
 print("")
 
-#DATA processing:
 
+# CSV AIS DATA:
+    
+    
 # Path to the directory containing the CSV files
 directory_path = './COAST_NOAA_AIS_data'  # Replace with the correct path
+
+# Get the directory of the Python script
+script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Dictionary to hold DataFrames
 csv_data = {}
@@ -75,15 +117,31 @@ for file_name in os.listdir(directory_path):
         csv_data[key] = df
 
 print("CVS data loaded!")
-# Define the list of desired navigation statuses
-navigation_status_entry = ['under-way-using-engine', 
-                           'moored', 
-                           'fishing']
 
+# Reverse the mapping for easy lookup
+status_description_mapping = {v: k for k, v in navigation_status_mapping_full.items()}
+
+# Initialize counter
+status_counter_CSV = Counter()
+
+# Iterate through all filenames in csv_data
+for filename, data in csv_data.items():
+    if "Status" in data:
+        for status in data["Status"]:
+            # Convert to integer if possible, handling NaN values
+            if isinstance(status, (int, float)) and not np.isnan(status):
+                status_counter_CSV[int(status)] += 1  # Ensure integer keys
+
+# Print the counts with descriptions
+for status in range(16):  # Ensure all statuses are checked
+    count = status_counter_CSV.get(status, 0)
+    description = status_description_mapping.get(status, f"Unknown status {status}")
+    print(f"There are {count} cases of status {status} ({description})")
+
+
+# JSON AIS DATA:
     
-# Get the directory of the Python script
-script_dir = os.path.dirname(os.path.abspath(__file__))
-
+    
 # Define the path to the directory containing JSON files
 json_dir = os.path.join(script_dir, "raw_data_rotterdam", "raw_data_rotterdam_original")
 
@@ -215,13 +273,7 @@ print(f"Filtered validation data count: {sum(len(file_data['data']) for file_dat
 print("")
 for i in range(len(navigation_status_entry)):
     print("Data filterd for:", navigation_status_entry[i])
-    
-# Define a mapping for the navigation statuses
-navigation_status_mapping = {
-    'under-way-using-engine': 0,
-    'moored': 1,
-    'fishing': 2
-}
+
 
 # Function to extract data and create a matrix
 def create_matrix(ais_data_dict):
@@ -277,7 +329,7 @@ print("")
 print("Matrices created for Sklearn")
 print("")
 
-#MACHINE LEARNING
+#------------------ MACHINE LEARNING ----------------------------------
 
 learning_type = 'none'
 
