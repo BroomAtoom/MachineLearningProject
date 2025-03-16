@@ -5,6 +5,10 @@ Created on Sat Mar 15 13:29:56 2025
 @author: evert
 """
 
+#link for more AIS dat:
+#https://coast.noaa.gov/htdata/CMSP/AISDataHandler/2020/index.html
+
+
 print("Importing modules...")
 
 import os
@@ -29,7 +33,7 @@ start_training_time = time.time()
 warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
 # Set a random seed for reproducibility
-random_seed = 19
+random_seed = 2
 np.random.seed(random_seed)
 
 # Create the 'models' folder if it doesn't exist
@@ -46,9 +50,31 @@ def memory_usage():
 print("Importing finished")
 print("")
 print("Loading data...")
+print("Loading CVS files...")
+print("")
 
 #DATA processing:
-    
+
+# Path to the directory containing the CSV files
+directory_path = './COAST_NOAA_AIS_data'  # Replace with the correct path
+
+# Dictionary to hold DataFrames
+csv_data = {}
+
+# Loop through all files in the directory
+for file_name in os.listdir(directory_path):
+    # Check if the file is a CSV
+    if file_name.endswith('.csv'):
+        file_path = os.path.join(directory_path, file_name)
+        
+        # Load the CSV file into a pandas DataFrame
+        df = pd.read_csv(file_path)
+        
+        # Add the DataFrame to the dictionary, using the file name (without extension) as the key
+        key = os.path.splitext(file_name)[0]  # Use the file name without extension as the key
+        csv_data[key] = df
+
+print("CVS data loaded!")
 # Define the list of desired navigation statuses
 navigation_status_entry = ['under-way-using-engine', 
                            'moored', 
@@ -80,8 +106,8 @@ np.random.shuffle(file_keys)
 
 # Compute split indices
 total_files = len(file_keys)
-train_split = int(0.60 * total_files)
-test_split = int(0.80 * total_files)  # 60% train + 20% test = 80%
+train_split = int(0.9 * total_files)
+test_split = int(0.95* total_files)  # 60% train + 20% test = 80%
 
 # Split the data
 AIS_data_train = {key: ais_data_dict[key] for key in file_keys[:train_split]}
@@ -253,7 +279,7 @@ print("")
 
 #MACHINE LEARNING
 
-learning_type = 'sklearn'
+learning_type = 'none'
 
 match learning_type:
     case 'sklearn':
@@ -261,10 +287,10 @@ match learning_type:
         print("")
 
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(400,),  # Example with 600 neurons
+        train_nn = MLPClassifier(hidden_layer_sizes=(450,),  # Example with 600 neurons
                                  activation='relu',
                                  solver='adam',
-                                 max_iter=250,  # One iteration per epoch
+                                 max_iter=100,  # One iteration per epoch
                                  warm_start=True,  # Keeps the previous model state to continue from last fit
                                  random_state=random_seed)
 
@@ -276,7 +302,7 @@ match learning_type:
         test_accuracies = []  # To store test accuracies for each epoch
 
         # Maximum number of epochs
-        max_epochs = 200
+        max_epochs = 20
         for epoch in range(max_epochs):
             start_time = time.time()  # Record the start time for the epoch
             print(f"\nEpoch {epoch+1}/{max_epochs}")
@@ -348,7 +374,6 @@ match learning_type:
                 f.write(f"Train Percentage: {train_split / total_files * 100:.2f}%\n")
                 f.write(f"Test Percentage: {(test_split - train_split) / total_files * 100:.2f}%\n")
                 f.write(f"Validation Percentage: {(total_files - test_split) / total_files * 100:.2f}%\n")
-                # Write the navigation status counts for each set
                 f.write(f"\nNavigation status counts for training set:\n")
                 for status, count in train_status_counts.items():
                     f.write(f"{status}: {count}\n")
