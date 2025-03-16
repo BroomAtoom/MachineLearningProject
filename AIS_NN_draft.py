@@ -41,7 +41,7 @@ random_seed = 10
 np.random.seed(random_seed)
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
-data_type = 'CSV'
+data_type = 'JSON'
 
 match data_type:
     case 'JSON':
