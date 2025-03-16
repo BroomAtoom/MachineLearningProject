@@ -51,22 +51,21 @@ def memory_usage():
     memory_info = process.memory_info()
     return memory_info.rss / 1024 / 1024  # Convert bytes to MB
 
-#------------------ NAV MAPPING ----------------------------------
+# ------------------ NAV MAPPING ----------------------------------
 
 # Define the list of desired navigation statuses
 navigation_status_entry = ['under-way-using-engine', 
                            'moored', 
                            'fishing']
 
-        
-# Define a mapping for the navigation statuses
+# Define a mapping for the navigation statuses (the one that actually will be used)
 navigation_status_mapping = {
     'under-way-using-engine': 0,
-    'moored': 1,
-    'fishing': 2
+    'moored': 5,
+    'fishing': 7
 }
 
-# Full nav enconding (https://coast.noaa.gov/data/marinecadastre/ais/data-dictionary.pdf)
+# Full nav encoding (https://coast.noaa.gov/data/marinecadastre/ais/data-dictionary.pdf)
 navigation_status_mapping_full = {
     'under-way-using-engine': 0,
     'anchored': 1,
@@ -80,43 +79,46 @@ navigation_status_mapping_full = {
     'undefined': 15
 }    
 
+# ------------------ DATA PROCESSING ----------------------------------
 
-
-#------------------ DATA PROCESSING ----------------------------------
-
-print("Importing finished")
-print("")
+print("Importing finished\n")
 print("Loading data...")
-print("Loading CVS files...")
-print("")
-
+print("Loading CSV files...\n")
 
 # CSV AIS DATA:
-    
-    
+
 # Path to the directory containing the CSV files
 directory_path = './COAST_NOAA_AIS_data'  # Replace with the correct path
 
 # Get the directory of the Python script
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
+# Get list of CSV files
+csv_files = [file for file in os.listdir(directory_path) if file.endswith('.csv')]
+total_files = len(csv_files)  # Count total CSV files
+
 # Dictionary to hold DataFrames
 csv_data = {}
 
-# Loop through all files in the directory
-for file_name in os.listdir(directory_path):
-    # Check if the file is a CSV
-    if file_name.endswith('.csv'):
-        file_path = os.path.join(directory_path, file_name)
-        
-        # Load the CSV file into a pandas DataFrame
-        df = pd.read_csv(file_path)
-        
-        # Add the DataFrame to the dictionary, using the file name (without extension) as the key
-        key = os.path.splitext(file_name)[0]  # Use the file name without extension as the key
-        csv_data[key] = df
+print(f"Found {total_files} CSV files. Starting to load...\n")
 
-print("CVS data loaded!")
+# Loop through all files and track progress
+for i, file_name in enumerate(csv_files):
+    file_path = os.path.join(directory_path, file_name)
+    
+    # Load the CSV file into a pandas DataFrame
+    df = pd.read_csv(file_path)
+    
+    # Add the DataFrame to the dictionary
+    key = os.path.splitext(file_name)[0]  # Use filename without extension as the key
+    csv_data[key] = df
+
+    # Print progress at every 10% milestone
+    progress = (i + 1) / total_files * 100
+    if progress % 10 < (100 / total_files) or i == total_files - 1:  # Print at ~10%, 20%, ..., 100%
+        print(f"Loading progress: {int(progress)}% complete")
+
+print("\nCSV data loaded!")
 
 # Reverse the mapping for easy lookup
 status_description_mapping = {v: k for k, v in navigation_status_mapping_full.items()}
@@ -138,7 +140,32 @@ for status in range(16):  # Ensure all statuses are checked
     description = status_description_mapping.get(status, f"Unknown status {status}")
     print(f"There are {count} cases of status {status} ({description})")
 
+print("\nFiltering CSV data on nav status...")
 
+# ------------------ FILTERING DATA ----------------------------------
+
+# Define a set of allowed navigation status values
+allowed_statuses = set(navigation_status_mapping.values())
+
+# Initialize the filtered dictionary
+CSV_data_filtered = {}
+
+# Iterate through all filenames in csv_data
+for filename, data in csv_data.items():
+    if "Status" in data:
+        # Convert to NumPy array for efficient filtering
+        status_array = np.array(data["Status"])
+
+        # Create a Boolean mask where status is in allowed_statuses
+        mask = np.isin(status_array, list(allowed_statuses))
+
+        # If there are matching entries, filter all columns efficiently
+        if np.any(mask):  # Only process if at least one match exists
+            CSV_data_filtered[filename] = {
+                key: np.array(values)[mask].tolist() for key, values in data.items()
+            }
+
+print("Filtering complete!")
 # JSON AIS DATA:
     
     
