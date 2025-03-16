@@ -37,11 +37,11 @@ start_training_time = time.time()                               #Start time to t
 warnings.filterwarnings("ignore", category=ConvergenceWarning)  #Disable iter=1 warning in Sklearn
 
 # Set a random seed for reproducibility
-random_seed = 13
+random_seed = 18
 np.random.seed(random_seed)
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
-data_type = 'JSON'
+data_type = 'CSV'
 
 match data_type:
     case 'JSON':
@@ -508,10 +508,10 @@ match learning_type:
         print("")
 
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(100,),  # Example with 600 neurons
+        train_nn = MLPClassifier(hidden_layer_sizes=(20,),  # Example with 600 neurons
                                  activation='relu',
                                  solver='adam',
-                                 max_iter=20,  
+                                 max_iter=2,  
                                  warm_start=True,  # Keeps the previous model state to continue from last fit
                                  random_state=random_seed)
 
@@ -523,7 +523,7 @@ match learning_type:
         test_accuracies = []  # To store test accuracies for each epoch
 
         # Maximum number of epochs
-        max_epochs = 20
+        max_epochs = 30
         for epoch in range(max_epochs):
             start_time = time.time()  # Record the start time for the epoch
             print(f"\nEpoch {epoch+1}/{max_epochs}")
