@@ -37,7 +37,7 @@ start_training_time = time.time()                               #Start time to t
 warnings.filterwarnings("ignore", category=ConvergenceWarning)  #Disable iter=1 warning in Sklearn
 
 # Set a random seed for reproducibility
-random_seed = 18
+random_seed = 53
 np.random.seed(random_seed)
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
@@ -511,10 +511,10 @@ match learning_type:
         print("")
 
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(20,),  # Example with 600 neurons
+        train_nn = MLPClassifier(hidden_layer_sizes=(100,),  # Example with 600 neurons
                                  activation='relu',
                                  solver='adam',
-                                 max_iter=2,  
+                                 max_iter=10,  
                                  warm_start=True,  # Keeps the previous model state to continue from last fit
                                  random_state=random_seed)
 
