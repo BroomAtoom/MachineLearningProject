@@ -17,6 +17,7 @@ import time
 import warnings
 import psutil
 import joblib
+import random
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -119,6 +120,8 @@ for i, file_name in enumerate(csv_files):
         print(f"Loading progress: {int(progress)}% complete")
 
 print("\nCSV data loaded!")
+print("")
+print("Finding NAV status values...")
 
 # Reverse the mapping for easy lookup
 status_description_mapping = {v: k for k, v in navigation_status_mapping_full.items()}
@@ -142,7 +145,7 @@ for status in range(16):  # Ensure all statuses are checked
 
 print("\nFiltering CSV data on nav status...")
 
-# ------------------ FILTERING DATA ----------------------------------
+# ------------------ FILTERING CSV DATA ----------------------------------
 
 # Define a set of allowed navigation status values
 allowed_statuses = set(navigation_status_mapping.values())
@@ -166,8 +169,50 @@ for filename, data in csv_data.items():
             }
 
 print("Filtering complete!")
-# JSON AIS DATA:
+print("Splitting CSV data...")
+# Initialize dictionaries for training, testing, and validation data
+CSV_data_train = {}
+CSV_data_test = {}
+CSV_data_val = {}
+
+# Set the random seed for reproducibility (optional)
+random.seed(random_seed)
+
+# Loop through each filename in the filtered data
+for filename, data in CSV_data_filtered.items():
+    # Get the number of rows in the current dataset
+    num_rows = len(data['Status'])  # Assuming 'Status' is present in all rows
     
+    # Generate a list of indices to shuffle
+    indices = list(range(num_rows))
+    
+    # Shuffle the indices randomly
+    random.shuffle(indices)
+    
+    # Split indices into 80%, 10%, 10%
+    split_80 = int(0.8 * num_rows)
+    split_90 = int(0.9 * num_rows)
+    
+    train_indices = indices[:split_80]
+    test_indices = indices[split_80:split_90]
+    val_indices = indices[split_90:]
+    
+    # Create subsets for training, testing, and validation
+    CSV_data_train[filename] = {key: [values[i] for i in train_indices] for key, values in data.items()}
+    CSV_data_test[filename] = {key: [values[i] for i in test_indices] for key, values in data.items()}
+    CSV_data_val[filename] = {key: [values[i] for i in val_indices] for key, values in data.items()}
+
+# Print the size of each set to verify
+print("")
+print(f"Training set size: {sum(len(data['Status']) for data in CSV_data_train.values())} rows")
+print(f"Testing set size: {sum(len(data['Status']) for data in CSV_data_test.values())} rows")
+print(f"Validation set size: {sum(len(data['Status']) for data in CSV_data_val.values())} rows")
+
+
+# -------------------------------- JSON AIS DATA ---------------------------------------:
+print("")
+print("Loading JSON data...")   
+print("") 
     
 # Define the path to the directory containing JSON files
 json_dir = os.path.join(script_dir, "raw_data_rotterdam", "raw_data_rotterdam_original")
@@ -191,8 +236,8 @@ np.random.shuffle(file_keys)
 
 # Compute split indices
 total_files = len(file_keys)
-train_split = int(0.9 * total_files)
-test_split = int(0.95* total_files)  # 60% train + 20% test = 80%
+train_split = int(0.8 * total_files)
+test_split = int(0.9* total_files)  # 60% train + 20% test = 80%
 
 # Split the data
 AIS_data_train = {key: ais_data_dict[key] for key in file_keys[:train_split]}
@@ -302,7 +347,9 @@ for i in range(len(navigation_status_entry)):
     print("Data filterd for:", navigation_status_entry[i])
 
 
-# Function to extract data and create a matrix
+#-------------------- CREATING TRAIN, TEST AND VALIDATION MATRICES ----------------
+
+# Function to extract data and create a matrix for JSON files
 def create_matrix(ais_data_dict):
     matrix_data = []
     
@@ -327,6 +374,38 @@ def create_matrix(ais_data_dict):
     
     # Convert the matrix data to a NumPy array for easier manipulation
     return np.array(matrix_data)
+
+
+# Function to create matrix from CSV_data_train (directly using the encoded nav status values)
+def create_matrix_from_csv(CSV_data_dict):
+    matrix_data = []
+    
+    # Iterate through all files in CSV_data_dict
+    for filename, file_data in CSV_data_dict.items():
+        # Ensure 'Status', 'LAT', 'LON', and 'SOG' keys exist
+        if 'Status' in file_data and 'LAT' in file_data and 'LON' in file_data and 'SOG' in file_data:
+            # Loop through each entry in the 'Status' column
+            for i in range(len(file_data['Status'])):
+                # Extract data for the current entry
+                speed = file_data['SOG'][i] if not np.isnan(file_data['SOG'][i]) else 0
+                lat = file_data['LAT'][i] if not np.isnan(file_data['LAT'][i]) else 0
+                long = file_data['LON'][i] if not np.isnan(file_data['LON'][i]) else 0
+                
+                # Extract the raw navigation status value (it's already an integer in the 'Status' column)
+                nav_status = file_data['Status'][i]
+                
+                # Append the data to the matrix (using raw integer nav_status)
+                matrix_data.append([long, lat, speed, nav_status])
+    
+    # Convert the matrix data to a NumPy array for easier manipulation
+    return np.array(matrix_data)
+
+
+#Create matrices from CSV data
+CSV_AIS_data_train_matrix = create_matrix_from_csv(CSV_data_train)
+CSV_AIS_data_test_matrix = create_matrix_from_csv(CSV_data_test)
+CSV_AIS_data_val_matrix = create_matrix_from_csv(CSV_data_val)
+
 
 # Create the matrices for train, test, and validation sets
 AIS_data_train_matrix = create_matrix(AIS_data_train_filtered)
