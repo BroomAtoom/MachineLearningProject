@@ -39,7 +39,7 @@ start_training_time = time.time()                               #Start time to t
 warnings.filterwarnings("ignore", category=ConvergenceWarning)  #Disable iter=1 warning in Sklearn
 
 # Set a random seed for reproducibility
-random_seed = 1
+random_seed = 4532
 np.random.seed(random_seed)
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
@@ -506,16 +506,15 @@ match data_type:
 
 #------------------ K-MEANS DATA CLUSTERING ----------------------------------
 
-clustering = 'labels' # 'labels' or 'distance'
-
+clustering = 'distance' # 'labels' or 'distance'
+n_clusters = 4      # Number of clusters (can be changed)
 
 if clustering == 'labels':
     print("K-means to cluster data")
     print("")
     print("K-clustering using labels...")
     
-    n_clusters = 4      # Number of clusters (can be changed)
-    
+
     # Fit K-Means on the training data
     kmeans = KMeans(n_clusters=n_clusters, random_state=random_seed, n_init='auto')
     train_clusters = kmeans.fit_predict(x_train)      # Assigns a cluster to each sample
@@ -582,10 +581,10 @@ match learning_type:
         print("")
 
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(100,),  # Example with N neurons
+        train_nn = MLPClassifier(hidden_layer_sizes=(6,9,12,9,6),
                                  activation='relu',
                                  solver='adam',
-                                 max_iter=50,  
+                                 max_iter=200,  
                                  warm_start=True,  # Keeps the previous model state to continue from last fit
                                  random_state=random_seed)
 
@@ -597,7 +596,7 @@ match learning_type:
         test_accuracies = []  # To store test accuracies for each epoch
 
         # Maximum number of epochs
-        max_epochs = 20
+        max_epochs = 50
         for epoch in range(max_epochs):
             start_time = time.time()  # Record the start time for the epoch
             print(f"\nEpoch {epoch+1}/{max_epochs}")
@@ -668,8 +667,10 @@ match learning_type:
                 f.write(f"Data used: {data_type}\n")
                 if clustering == 'labels':
                     f.write(f"Data clustering used: {clustering}\n")
+                    f.write(f"Number of clusters: {n_clusters}\n")
                 elif clustering == 'distance':
                     f.write(f"Data clustering used: {clustering}\n")
+                    f.write(f"Number of clusters: {n_clusters}\n")
                 else:
                     f.write(f"Data clustering used: None \n")
                 f.write(f"Random Seed: {random_seed}\n")
