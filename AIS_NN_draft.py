@@ -22,6 +22,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+from datetime import datetime
 from collections import Counter
 from sklearn import preprocessing
 from sklearn.preprocessing import StandardScaler, LabelEncoder
@@ -37,7 +38,7 @@ start_training_time = time.time()                               #Start time to t
 warnings.filterwarnings("ignore", category=ConvergenceWarning)  #Disable iter=1 warning in Sklearn
 
 # Set a random seed for reproducibility
-random_seed = 153
+random_seed = 35
 np.random.seed(random_seed)
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
@@ -596,10 +597,11 @@ match learning_type:
             
             # Calculate the total time taken for training and saving the model
             total_training_time = (end_training_time - start_training_time) / 60  # Convert to minutes
-
+            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Format: YYYY-MM-DD HH:MM:SS
             # Create the text file with model details
             txt_filename = os.path.join(model_dir, f'{data_type}_AIS_first_model_accuracy_{accuracy_test_str}%.txt')
             with open(txt_filename, "w") as f:
+                f.write(f"Date and Time: {current_time}\n")
                 f.write(f"Data used: {data_type}\n")
                 f.write(f"Random Seed: {random_seed}\n")
                 f.write(f"Navigation Status Entries: {navigation_status_entry}\n")
