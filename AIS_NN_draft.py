@@ -41,7 +41,7 @@ random_seed = 153
 np.random.seed(random_seed)
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
-data_type = 'CSV'
+data_type = 'JSON'
 
 match data_type:
     case 'JSON':
@@ -509,12 +509,19 @@ match learning_type:
     case 'sklearn':
         print('Sklearn is being used...')
         print("")
+        print("Apply mapping...")
+        label_map = {0: 0, 1: 1, 5: 2, 7: 3}                        # Map original labels to 0,1,2,3
+        # y_train_mapped = np.array([label_map[y] for y in y_train])  # Apply mapping to training labels
+        # y_val = np.array([label_map[y] for y in y_val])             # Apply mapping to validation labels
+        # y_test = np.array([label_map[y] for y in y_test])           # Apply mapping to validation labels
+        print("Mapping finished!")
+        print("")
 
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(4,),  # Example with 600 neurons
-                                 activation='tanh',
+        train_nn = MLPClassifier(hidden_layer_sizes=(100,),  # Example with N neurons
+                                 activation='relu',
                                  solver='adam',
-                                 max_iter=2,  
+                                 max_iter=50,  
                                  warm_start=True,  # Keeps the previous model state to continue from last fit
                                  random_state=random_seed)
 
@@ -526,7 +533,7 @@ match learning_type:
         test_accuracies = []  # To store test accuracies for each epoch
 
         # Maximum number of epochs
-        max_epochs = 5
+        max_epochs = 100
         for epoch in range(max_epochs):
             start_time = time.time()  # Record the start time for the epoch
             print(f"\nEpoch {epoch+1}/{max_epochs}")
