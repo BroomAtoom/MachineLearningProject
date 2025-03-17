@@ -44,7 +44,7 @@ random_seed = 6363
 np.random.seed(random_seed)
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
-data_type = 'JSON'
+data_type = 'CSV'
 
 match data_type:
     case 'JSON':
@@ -514,6 +514,9 @@ match data_type:
 
 
 #------------------ K-MEANS DATA CLUSTERING ----------------------------------
+print("")
+print("Starting on K-means:")
+print("Starting Elbow-method to determine K...")
 
 clustering = 'distance' # 'labels' or 'distance'
 n_clusters = 4      # Number of clusters (can be changed)
@@ -537,6 +540,14 @@ plt.xlabel('Number of Clusters')
 plt.ylabel('Inertia')
 plt.show()
 
+match data_type:
+    case 'CSV':
+        n_clusters = 13
+        print("Using K = 13 for elbow point")
+    case 'JSON':
+        print("Using K = 8 ")
+        n_clusters = 8
+        
 
 if clustering == 'labels':
     print("K-means to cluster data")
@@ -595,7 +606,7 @@ else:
 print("")        
 #------------------ MACHINE LEARNING -----------------------------------------
 
-learning_type = 'none'
+learning_type = 'sklearn'
 
 match learning_type:
     case 'sklearn':
@@ -613,7 +624,7 @@ match learning_type:
         train_nn = MLPClassifier(hidden_layer_sizes=(6,9,12,9,6),
                                  activation='relu',
                                  solver='adam',
-                                 max_iter=200,  
+                                 max_iter=20,  
                                  warm_start=True,  # Keeps the previous model state to continue from last fit
                                  random_state=random_seed)
 
@@ -625,7 +636,7 @@ match learning_type:
         test_accuracies = []  # To store test accuracies for each epoch
 
         # Maximum number of epochs
-        max_epochs = 50
+        max_epochs = 20
         for epoch in range(max_epochs):
             start_time = time.time()  # Record the start time for the epoch
             print(f"\nEpoch {epoch+1}/{max_epochs}")
