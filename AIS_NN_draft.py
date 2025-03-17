@@ -506,32 +506,62 @@ match data_type:
 
 #------------------ K-MEANS DATA CLUSTERING ----------------------------------
 
+clustering = 'labels' # 'labels' or 'distance'
+print("K-means to cluster data")
+print("")
 
+if clustering == 'labels':
 
+    print("K-clustering using labels...")
+    
+    n_clusters = 4      # Number of clusters (can be changed)
+    
+    # Fit K-Means on the training data
+    kmeans = KMeans(n_clusters=n_clusters, random_state=random_seed, n_init=10)
+    train_clusters = kmeans.fit_predict(x_train)      # Assigns a cluster to each sample
+    
+    # Assign clusters to test and validation sets
+    test_clusters = kmeans.predict(x_test)
+    val_clusters = kmeans.predict(x_val)
+    
+    # Add cluster labels as a new feature
+    x_train_augmented = np.column_stack((x_train, train_clusters))
+    x_test_augmented = np.column_stack((x_test, test_clusters))
+    x_val_augmented = np.column_stack((x_val, val_clusters))
+    
+    x_train = x_train_augmented
+    x_test = x_test_augmented
+    x_val = x_val_augmented
+    
+    print("Clustering complete!")
+    print("")
+    
+elif clustering == 'distance':
+    kmeans = KMeans(n_clusters=n_clusters, random_state=random_seed, n_init=10)
+    kmeans.fit(x_train)
+    
+    # Get distances to each cluster center
+    train_distances = kmeans.transform(x_train)  # Shape: (5000, n_clusters)
+    test_distances = kmeans.transform(x_test)    # Shape: (1000, n_clusters)
+    val_distances = kmeans.transform(x_val)      # Shape: (1000, n_clusters)
+    
+    # Append distances as new features
+    x_train_augmented = np.hstack((x_train, train_distances))
+    x_test_augmented = np.hstack((x_test, test_distances))
+    x_val_augmented = np.hstack((x_val, val_distances))
+    
+        
+        
+#------------------ MACHINE LEARNING -----------------------------------------
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-#------------------ MACHINE LEARNING ----------------------------------
-
-learning_type = 'sklearn'
+learning_type = 'None'
 
 match learning_type:
     case 'sklearn':
         print('Sklearn is being used...')
         print("")
         print("Apply mapping...")
-        label_map = {0: 0, 1: 1, 5: 2, 7: 3}                        # Map original labels to 0,1,2,3
+        label_map = {0: 0, 1: 1, 5: 2, 7: 3}                          # Map original labels to 0,1,2,3
         # y_train_mapped = np.array([label_map[y] for y in y_train])  # Apply mapping to training labels
         # y_val = np.array([label_map[y] for y in y_val])             # Apply mapping to validation labels
         # y_test = np.array([label_map[y] for y in y_test])           # Apply mapping to validation labels
