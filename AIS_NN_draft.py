@@ -507,17 +507,17 @@ match data_type:
 #------------------ K-MEANS DATA CLUSTERING ----------------------------------
 
 clustering = 'labels' # 'labels' or 'distance'
-print("K-means to cluster data")
-print("")
+
 
 if clustering == 'labels':
-
+    print("K-means to cluster data")
+    print("")
     print("K-clustering using labels...")
     
     n_clusters = 4      # Number of clusters (can be changed)
     
     # Fit K-Means on the training data
-    kmeans = KMeans(n_clusters=n_clusters, random_state=random_seed, n_init=10)
+    kmeans = KMeans(n_clusters=n_clusters, random_state=random_seed, n_init='auto')
     train_clusters = kmeans.fit_predict(x_train)      # Assigns a cluster to each sample
     
     # Assign clusters to test and validation sets
@@ -537,24 +537,37 @@ if clustering == 'labels':
     print("")
     
 elif clustering == 'distance':
-    kmeans = KMeans(n_clusters=n_clusters, random_state=random_seed, n_init=10)
+    print("K-means to cluster data")
+    print("")
+    print("K-clustering using distances...")
+    kmeans = KMeans(n_clusters=n_clusters, random_state=random_seed, n_init='auto')
     kmeans.fit(x_train)
     
     # Get distances to each cluster center
-    train_distances = kmeans.transform(x_train)  # Shape: (5000, n_clusters)
-    test_distances = kmeans.transform(x_test)    # Shape: (1000, n_clusters)
-    val_distances = kmeans.transform(x_val)      # Shape: (1000, n_clusters)
+    train_distances = kmeans.transform(x_train)  
+    test_distances = kmeans.transform(x_test)    
+    val_distances = kmeans.transform(x_val)      
     
     # Append distances as new features
     x_train_augmented = np.hstack((x_train, train_distances))
     x_test_augmented = np.hstack((x_test, test_distances))
     x_val_augmented = np.hstack((x_val, val_distances))
     
+    x_train = x_train_augmented
+    x_test = x_test_augmented
+    x_val = x_val_augmented
+    
+    print("Clustering complete!")
+    print("")
+
+else:
+    print("No clustering")
+    print("Using normal data")
         
-        
+print("")        
 #------------------ MACHINE LEARNING -----------------------------------------
 
-learning_type = 'None'
+learning_type = 'sklearn'
 
 match learning_type:
     case 'sklearn':
@@ -569,10 +582,10 @@ match learning_type:
         print("")
 
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(1000,),  # Example with N neurons
+        train_nn = MLPClassifier(hidden_layer_sizes=(100,),  # Example with N neurons
                                  activation='relu',
                                  solver='adam',
-                                 max_iter=100,  
+                                 max_iter=50,  
                                  warm_start=True,  # Keeps the previous model state to continue from last fit
                                  random_state=random_seed)
 
@@ -584,7 +597,7 @@ match learning_type:
         test_accuracies = []  # To store test accuracies for each epoch
 
         # Maximum number of epochs
-        max_epochs = 300
+        max_epochs = 20
         for epoch in range(max_epochs):
             start_time = time.time()  # Record the start time for the epoch
             print(f"\nEpoch {epoch+1}/{max_epochs}")
@@ -653,6 +666,12 @@ match learning_type:
             with open(txt_filename, "w") as f:
                 f.write(f"Date and Time: {current_time}\n")
                 f.write(f"Data used: {data_type}\n")
+                if clustering == 'labels':
+                    f.write(f"Data clustering used: {clustering}\n")
+                elif clustering == 'distance':
+                    f.write(f"Data clustering used: {clustering}\n")
+                else:
+                    f.write(f"Data clustering used: None \n")
                 f.write(f"Random Seed: {random_seed}\n")
                 f.write(f"Navigation Status Entries: {navigation_status_entry}\n")
                 f.write(f"Train Percentage: {train_split / total_files * 100:.2f}%\n")
