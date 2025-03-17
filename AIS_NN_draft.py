@@ -29,6 +29,7 @@ from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.exceptions import ConvergenceWarning
+from sklearn.cluster import KMeans
 
 #------------------ INITIAL CODE----------------------------------
 
@@ -502,12 +503,31 @@ match data_type:
     #     print("Matrices created for Sklearn with JSON and CVS data")
     #     print("")
 
+
+#------------------ K-MEANS DATA CLUSTERING ----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #------------------ MACHINE LEARNING ----------------------------------
 
 learning_type = 'sklearn'
 
 match learning_type:
-    case 'sklearn':
+    case 'None':
         print('Sklearn is being used...')
         print("")
         print("Apply mapping...")
