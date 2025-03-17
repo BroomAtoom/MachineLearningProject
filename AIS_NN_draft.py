@@ -18,6 +18,7 @@ import warnings
 import psutil
 import joblib
 import random
+import sys
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -39,7 +40,7 @@ start_training_time = time.time()                               #Start time to t
 warnings.filterwarnings("ignore", category=ConvergenceWarning)  #Disable iter=1 warning in Sklearn
 
 # Set a random seed for reproducibility
-random_seed = 4532
+random_seed = 6363
 np.random.seed(random_seed)
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
@@ -59,6 +60,14 @@ match data_type:
         print("Using: JSON and CSV data")
         print("")
         
+if data_type not in ['JSON', 'CSV', 'Both']:
+    print("Select: JSON, CSV or Both:")
+    data_type = input()
+    print("Selected:", data_type)
+    if data_type not in ['JSON', 'CSV', 'Both']:
+        print("Invalid data type! Exiting the program.")
+        sys.exit()
+
 
 # Create the 'models' folder if it doesn't exist
 model_dir = 'models'
@@ -509,6 +518,26 @@ match data_type:
 clustering = 'distance' # 'labels' or 'distance'
 n_clusters = 4      # Number of clusters (can be changed)
 
+# Range of cluster sizes to test
+k_range = range(1, 20)  # Test for 1 to 10 clusters
+inertia_values = []      # List to store inertia values
+
+# Loop through the range of cluster numbers
+for k in k_range:
+    # Fit K-Means on the training data for each k
+    kmeans = KMeans(n_clusters=k, random_state=random_seed, n_init='auto')
+    kmeans.fit(x_train)  # Fit the model
+    inertia_values.append(kmeans.inertia_)  # Store the inertia value
+
+# Plot Inertia vs Number of Clusters
+plt.plot(k_range, inertia_values, marker='o')
+plt.grid()
+plt.title('Elbow Method For Optimal k')
+plt.xlabel('Number of Clusters')
+plt.ylabel('Inertia')
+plt.show()
+
+
 if clustering == 'labels':
     print("K-means to cluster data")
     print("")
@@ -566,7 +595,7 @@ else:
 print("")        
 #------------------ MACHINE LEARNING -----------------------------------------
 
-learning_type = 'sklearn'
+learning_type = 'none'
 
 match learning_type:
     case 'sklearn':
