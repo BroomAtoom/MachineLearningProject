@@ -8,6 +8,15 @@ Created on Sat Mar 15 13:29:56 2025
 #link for more AIS dat:
 #https://coast.noaa.gov/htdata/CMSP/AISDataHandler/2020/index.html
 
+#TODO check for matrix train size after clustering
+#TODO determine labels for fault navigation
+#TODO change file paths (large files not stored in GitHub)
+#TODO make a good test model (JSON - no clustering)
+#TODO make a script to validate nav faults
+
+
+
+
 
 print("Importing modules...")
 
@@ -40,7 +49,7 @@ start_training_time = time.time()                               #Start time to t
 warnings.filterwarnings("ignore", category=ConvergenceWarning)  #Disable iter=1 warning in Sklearn
 
 # Set a random seed for reproducibility
-random_seed = 6363
+random_seed = 23451
 np.random.seed(random_seed)
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
@@ -518,7 +527,7 @@ print("")
 print("Starting on K-means:")
 print("Starting Elbow-method to determine K...")
 
-clustering = 'distance' # 'labels' or 'distance'
+clustering = 'labels' # 'labels' or 'distance'
 n_clusters = 4      # Number of clusters (can be changed)
 
 # Range of cluster sizes to test
@@ -621,10 +630,10 @@ match learning_type:
         print("")
 
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(6,9,12,9,6),
+        train_nn = MLPClassifier(hidden_layer_sizes=(6,9,12,36,60,120,240,120,60,36,12,9,6),
                                  activation='relu',
                                  solver='adam',
-                                 max_iter=20,  
+                                 max_iter=150,  
                                  warm_start=True,  # Keeps the previous model state to continue from last fit
                                  random_state=random_seed)
 
@@ -636,7 +645,7 @@ match learning_type:
         test_accuracies = []  # To store test accuracies for each epoch
 
         # Maximum number of epochs
-        max_epochs = 20
+        max_epochs = 100
         for epoch in range(max_epochs):
             start_time = time.time()  # Record the start time for the epoch
             print(f"\nEpoch {epoch+1}/{max_epochs}")
