@@ -3,14 +3,23 @@ import json
 import os
 data_path = os.path.join('sample_raw_data_rotterdam')
 output_path = os.path.join('sample_raw_data_rotterdam', 'combined.json')
-combined_data = []
-for file in os.listdir(data_path):
-    if file.endswith('.json'):
-        with open(os.path.join(data_path, file), 'r') as f:
-            data = json.load(f)['data']
-        combined_data.extend(data)
 
-final_combined_json = {"data": combined_data}
 
-with open(output_path, 'w') as outfile:
-    json.dump(final_combined_json, outfile, indent=4)
+def complete_csv(data_path, output_path):
+    with open(data_path, 'r') as f:
+        data = json.load(f)['data']
+        
+
+def combine_json(data_path, output_path):
+    combined_data = []
+    for file in os.listdir(data_path):
+        if file.endswith('.json'):
+            with open(os.path.join(data_path, file), 'r') as f:
+                data = json.load(f)['data']
+            combined_data.extend(data)
+
+    final_combined_json = {"data": combined_data}
+
+    with open(output_path, 'w') as outfile:
+        json.dump(final_combined_json, outfile, indent=4)
+    print(f"Combined data saved to {output_path}")
