@@ -13,7 +13,7 @@ Created on Sat Mar 15 13:29:56 2025
 #TODO change file paths (large files not stored in GitHub)
 #TODO make a good test model (JSON - no clustering)
 #TODO make a script to validate nav faults
-
+#TODO check for difference validation and test (see slides NN)
 
 
 
@@ -49,7 +49,7 @@ start_training_time = time.time()                               #Start time to t
 warnings.filterwarnings("ignore", category=ConvergenceWarning)  #Disable iter=1 warning in Sklearn
 
 # Set a random seed for reproducibility
-random_seed = 23451
+random_seed = 4325
 np.random.seed(random_seed)
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
