@@ -5,8 +5,8 @@ import pandas as pd
 
 
 
-filename = "AIS_2020_01_02.csv"
-output_filename = "AIS_2020_01_02_cleaned.csv"
+filename = "AIS_2020_01_03.csv"
+output_filename = "AIS_2020_01_03_cleaned.csv"
 folder_name = "COAST_NOAA_AIS_data"
 file_path = os.path.join(folder_name,filename)
 output_path = os.path.join(folder_name, output_filename)
