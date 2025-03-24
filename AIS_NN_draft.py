@@ -15,6 +15,7 @@ Created on Sat Mar 15 13:29:56 2025
 #TODO make a script to validate nav faults
 #TODO check for difference validation and test (see slides NN)
 
+#python3 AIS_NN_draft.py
 
 
 
