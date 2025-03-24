@@ -49,11 +49,11 @@ start_training_time = time.time()                               #Start time to t
 warnings.filterwarnings("ignore", category=ConvergenceWarning)  #Disable iter=1 warning in Sklearn
 
 # Set a random seed for reproducibility
-random_seed = 1205
+random_seed = 23130
 np.random.seed(random_seed)
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
-data_type = 'None'
+data_type = 'CSV'
 
 match data_type:
     case 'JSON':
@@ -420,34 +420,34 @@ def create_matrix(ais_data_dict):
     return np.array(matrix_data)
 
 
-# Function to create matrix from CSV_data_train (directly using the encoded nav status values)
 def create_matrix_from_csv(CSV_data_dict):
     matrix_data = []
-    
+    total_entries = sum(len(file_data['Status']) for file_data in CSV_data_dict.values() if 'Status' in file_data)
+    processed_entries = 0
+    last_printed_percentage = -5  # Ensures the first update starts at 0%
+
     # Iterate through all files in CSV_data_dict
     for filename, file_data in CSV_data_dict.items():
-        # Ensure 'Status', 'LAT', 'LON', and 'SOG' keys exist
         if 'Status' in file_data and 'LAT' in file_data and 'LON' in file_data and 'SOG' in file_data:
-            # Loop through each entry in the 'Status' column
-            for i in range(len(file_data['Status'])):
-                # Extract data for the current entry
+            num_entries = len(file_data['Status'])
+
+            for i in range(num_entries):
                 speed = file_data['SOG'][i] if not np.isnan(file_data['SOG'][i]) else 0
                 lat = file_data['LAT'][i] if not np.isnan(file_data['LAT'][i]) else 0
                 long = file_data['LON'][i] if not np.isnan(file_data['LON'][i]) else 0
-                
-                # Extract the raw navigation status value (it's already an integer in the 'Status' column)
                 nav_status = file_data['Status'][i]
-                
-                # Append the data to the matrix (using raw integer nav_status)
-                matrix_data.append([long, lat, speed, nav_status])
-    
-    # Convert the matrix data to a NumPy array for easier manipulation
-    return np.array(matrix_data)
 
-# # Optionally, convert to DataFrame for better readability
-# AIS_data_train_df = pd.DataFrame(AIS_data_train_matrix, columns=["long", "lat", "speed", "navigation_status"])
-# AIS_data_test_df = pd.DataFrame(AIS_data_test_matrix, columns=["long", "lat", "speed", "navigation_status"])
-# AIS_data_val_df = pd.DataFrame(AIS_data_val_matrix, columns=["long", "lat", "speed", "navigation_status"])
+                matrix_data.append([long, lat, speed, nav_status])
+                
+                # Update progress tracking
+                processed_entries += 1
+                percentage_done = (processed_entries / total_entries) * 100
+                
+                if percentage_done >= last_printed_percentage + 5:
+                    print(f"Progress: {percentage_done:.1f}%")
+                    last_printed_percentage += 5
+
+    return np.array(matrix_data)
 
 
 match data_type:
@@ -527,7 +527,7 @@ print("")
 print("Starting on K-means:")
 print("Starting Elbow-method to determine K...")
 
-clustering = 'labels' # 'labels' or 'distance'
+clustering = 'none' # 'labels' or 'distance'
 n_clusters = 4      # Number of clusters (can be changed)
 
 # Range of cluster sizes to test
@@ -615,7 +615,7 @@ else:
 print("")        
 #------------------ MACHINE LEARNING -----------------------------------------
 
-learning_type = 'sklearn'
+learning_type = 'none'
 
 match learning_type:
     case 'sklearn':
@@ -630,10 +630,10 @@ match learning_type:
         print("")
 
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(6,9,12,36,60,120,240,120,60,36,12,9,6),
+        train_nn = MLPClassifier(hidden_layer_sizes=(6),
                                  activation='relu',
                                  solver='adam',
-                                 max_iter=150,  
+                                 max_iter=10,  
                                  warm_start=True,  # Keeps the previous model state to continue from last fit
                                  random_state=random_seed)
 
@@ -645,7 +645,7 @@ match learning_type:
         test_accuracies = []  # To store test accuracies for each epoch
 
         # Maximum number of epochs
-        max_epochs = 100
+        max_epochs = 10
         for epoch in range(max_epochs):
             start_time = time.time()  # Record the start time for the epoch
             print(f"\nEpoch {epoch+1}/{max_epochs}")
