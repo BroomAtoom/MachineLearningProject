@@ -49,7 +49,7 @@ start_training_time = time.time()                               #Start time to t
 warnings.filterwarnings("ignore", category=ConvergenceWarning)  #Disable iter=1 warning in Sklearn
 
 # Set a random seed for reproducibility
-random_seed = 23130
+random_seed = 103
 np.random.seed(random_seed)
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
@@ -615,7 +615,7 @@ else:
 print("")        
 #------------------ MACHINE LEARNING -----------------------------------------
 
-learning_type = 'none'
+learning_type = 'sklearn'
 
 match learning_type:
     case 'sklearn':
