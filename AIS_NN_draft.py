@@ -42,12 +42,12 @@ print("Modules imported!")
 #------------------ INPUT PARAMETERS ------------------------------------------
 
 learning_type = 'none'
-random_seed = 341
+random_seed = 4920
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
 data_type = 'CSV'
 
-clustering = 'none'
+clustering = 'sklearn'
 
 #------------------ INITIAL CODE-----------------------------------------------
 
@@ -459,6 +459,35 @@ def create_matrix_from_csv(CSV_data_dict):
 
     return np.array(matrix_data)
 
+def count_last_column_values(matrix):
+    """
+    Counts occurrences of values in the last column of a 2D matrix 
+    or directly in a 1D list, and prints the results.
+    
+    Args:
+        matrix (list or np.ndarray): A list of lists (2D matrix) or a single list (1D array).
+    """
+    # Ensure the input is a Python list
+    if isinstance(matrix, np.ndarray):
+        matrix = matrix.tolist()
+
+    # If it's a 2D matrix, extract the last column
+    if isinstance(matrix[0], list):  
+        values = [row[-1] for row in matrix]
+    else:
+        values = matrix  # It's a 1D list
+
+    # Ensure values is a list of hashable elements
+    values = list(map(int, values))  # Convert to int to avoid unhashable errors
+
+    # Count occurrences
+    count = Counter(values)
+
+    # Print the result
+    for value, freq in count.items():
+        print(f"{value} = {freq} times")
+
+        
 
 match data_type:
     case 'JSON':
@@ -485,28 +514,22 @@ match data_type:
         print("")
         
     case 'CSV':
+
         #Do matrix splitting for sklearn
         print("Creating X_train...")
         CSV_AIS_data_train_matrix = create_matrix_from_csv(CSV_data_train)
+        count_last_column_values(CSV_AIS_data_train_matrix)
         x_train = CSV_AIS_data_train_matrix[:,:3]
         print("     X_train created!")
         print("Creating X_test...")
         
-        last_column = [row[-1] for row in x_train]
-
-        # Count occurrences
-        count_for_nav_statuses = Counter(last_column)
-        
-        # Print the result
-        for value, freq in count_for_nav_statuses.items():
-            print(f"{value} = {freq} times")
-        
-        
         CSV_AIS_data_test_matrix = create_matrix_from_csv(CSV_data_test)
+        count_last_column_values(CSV_AIS_data_test_matrix)
         x_test = CSV_AIS_data_test_matrix[:,:3]
         print("     X_test created!")
         print("Creating X_val...")
         CSV_AIS_data_val_matrix = create_matrix_from_csv(CSV_data_val)
+        count_last_column_values(CSV_AIS_data_val_matrix)
         x_val = CSV_AIS_data_val_matrix[:,:3]
         print("     X_val created!")
         
@@ -518,6 +541,15 @@ match data_type:
         y_test = CSV_AIS_data_test_matrix[:, 3:].ravel()
         y_val = CSV_AIS_data_val_matrix[:, 3:].ravel()
         
+        print("")
+        print("Checking for amount of nav statuses in y_train:")
+        count_last_column_values(y_train)
+        print("")
+        print("Checking for amount of nav statuses in y_test:")
+        count_last_column_values(y_test)
+        print("")
+        print("Checking for amount of nav statuses in y_val:")
+        count_last_column_values(y_val)
         print("")
         print("Matrices created for Sklearn with CSV data")
         print("")
@@ -642,7 +674,7 @@ match learning_type:
         print('Sklearn is being used...')
         print("")
         print("Apply mapping...")
-        label_map = {0: 0, 1: 1, 5: 2, 7: 3}                          # Map original labels to 0,1,2,3
+        # label_map = {0: 0, 1: 1, 5: 2, 7: 3}                          # Map original labels to 0,1,2,3
         # y_train_mapped = np.array([label_map[y] for y in y_train])  # Apply mapping to training labels
         # y_val = np.array([label_map[y] for y in y_val])             # Apply mapping to validation labels
         # y_test = np.array([label_map[y] for y in y_test])           # Apply mapping to validation labels
