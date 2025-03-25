@@ -1,0 +1,7 @@
+Date and Time: 2025-03-25 14:36:28
+Data used: CSV
+Data clustering used: None 
+Random Seed: 4920
+Navigation Status Entries: ['under-way-using-engine', 'moored', 'fishing']
+
+Navigation status counts for training set:

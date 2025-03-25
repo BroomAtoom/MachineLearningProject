@@ -41,13 +41,13 @@ print("Modules imported!")
 
 #------------------ INPUT PARAMETERS ------------------------------------------
 
-learning_type = 'none'
+learning_type = 'sklearn'
 random_seed = 4920
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
 data_type = 'CSV'
 
-clustering = 'sklearn'
+clustering = 'none'
 
 #------------------ INITIAL CODE-----------------------------------------------
 
@@ -684,7 +684,7 @@ match learning_type:
         # Initialize the model
         train_nn = MLPClassifier(hidden_layer_sizes=(1),
                                  solver='adam',
-                                 max_iter=30,  
+                                 max_iter=1,  
                                  warm_start=True,  # Keeps the previous model state to continue from last fit
                                  random_state=random_seed)
 
@@ -696,7 +696,7 @@ match learning_type:
         test_accuracies = []  # To store test accuracies for each epoch
 
         # Maximum number of epochs
-        max_epochs = 20
+        max_epochs = 1
         for epoch in range(max_epochs):
             start_time = time.time()  # Record the start time for the epoch
             print(f"\nEpoch {epoch+1}/{max_epochs}")
@@ -775,21 +775,21 @@ match learning_type:
                     f.write(f"Data clustering used: None \n")
                 f.write(f"Random Seed: {random_seed}\n")
                 f.write(f"Navigation Status Entries: {navigation_status_entry}\n")
-                f.write(f"Train Percentage: {train_split / total_files * 100:.2f}%\n")
-                f.write(f"Test Percentage: {(test_split - train_split) / total_files * 100:.2f}%\n")
-                f.write(f"Validation Percentage: {(total_files - test_split) / total_files * 100:.2f}%\n")
-                f.write(f"\nNavigation status counts for training set:\n")
+                # f.write(f"Train Percentage: {train_split / total_files * 100:.2f}%\n")
+                # f.write(f"Test Percentage: {(test_split - train_split) / total_files * 100:.2f}%\n")
+                # f.write(f"Validation Percentage: {(total_files - test_split) / total_files * 100:.2f}%\n")
+                # f.write(f"\nNavigation status counts for training set:\n")
             
-                for status, count in train_status_counts.items():
-                    f.write(f"{status}: {count}\n")
+                # for status, count in train_status_counts.items():
+                #     f.write(f"{status}: {count}\n")
             
-                f.write(f"\nNavigation status counts for testing set:\n")
-                for status, count in test_status_counts.items():
-                    f.write(f"{status}: {count}\n")
+                # f.write(f"\nNavigation status counts for testing set:\n")
+                # for status, count in test_status_counts.items():
+                #     f.write(f"{status}: {count}\n")
             
-                f.write(f"\nNavigation status counts for validation set:\n")
-                for status, count in val_status_counts.items():
-                    f.write(f"{status}: {count}\n")
+                # f.write(f"\nNavigation status counts for validation set:\n")
+                # for status, count in val_status_counts.items():
+                #     f.write(f"{status}: {count}\n")
 
                 f.write(f"\nMLPClassifier Parameters:\n")
                 f.write(f"Hidden Layer Sizes: {train_nn.hidden_layer_sizes}\n")
