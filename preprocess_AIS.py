@@ -8,7 +8,9 @@ def main():
     output_folder_name = "NOAA_AIS"
     file_path = os.path.join(input_folder_name,filename)
     output_path = os.path.join(output_folder_name, output_filename)
-    preprocess_AIS(file_path, output_path)
+    # preprocess_AIS(file_path, output_path)
+    df = select_head(output_path, 0.1)
+    print(df)
 
 
 ### SOG is speed over ground. Dit moet ook toegevoegd worden. Ook nog toevoegen dat alle schepen die minder dan 100 datapunten hebben.
@@ -49,6 +51,44 @@ def preprocess_AIS(file_path, output_path):
     print("Saving CSV in progres...")
     df.to_csv(output_path, index=False)
     print(f"CSV saved successfully to {output_path}!")
+
+
+def select_head(csv_file, percentage):
+    """ 
+    This function will take a .csv and a number (percentage) between 1 and 100.
+    If the percentage is 100, nothing changes.
+    When the percentage is below 100, it extracts that percentage of rows, 
+    and outputs a csv file.
+    
+    Args:
+    - csv_file (str): The path to the input CSV file.
+    - percentage (int): The percentage of rows to sample (between 1 and 100).
+    
+    Returns:
+    - A DataFrame containing the sampled rows.
+    """
+    # Read the CSV file into a DataFrame
+    print("Converting csv to df")
+    df = pd.read_csv(csv_file)
+    
+    # Check if the percentage is 100, return the original DataFrame
+    if percentage == 100:
+        print("Returning the entire dataset.")
+        return df
+
+    # Calculate the number of rows to take (top percentage)
+    num_rows = int(len(df) * (percentage / 100))
+
+    # Select the top 'num_rows' rows
+    df_selected = df.head(num_rows)
+
+    # Save the selected DataFrame to a new CSV file
+    output_file = csv_file.replace(".csv", f"_top_{percentage}.csv")
+    df_selected.to_csv(output_file, index=False)
+
+    print(f"Extracted the top {percentage}% of rows. Output saved to {output_file}.")
+    
+    return df_selected
 
 if __name__ == '__main__':
     main()
