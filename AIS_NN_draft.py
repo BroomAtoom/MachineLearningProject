@@ -8,16 +8,18 @@ Created on Sat Mar 15 13:29:56 2025
 #link for more AIS dat:
 #https://coast.noaa.gov/htdata/CMSP/AISDataHandler/2020/index.html
 
+"""
 #TODO check for matrix train size after clustering
-#TODO determine labels for fault navigation
 #TODO change file paths (large files not stored in GitHub)
 #TODO make a good test model (JSON - no clustering)
 #TODO make a script to validate nav faults
 #TODO check for difference validation and test (see slides NN)
+"""
 
-
-
-
+#TODO make new clustering
+#TODO determine number of clusters
+#TODO make validations
+#TODO make linear regression
 
 print("Importing modules...")
 
@@ -42,6 +44,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.exceptions import ConvergenceWarning
 from sklearn.cluster import KMeans
 
+print("Modules imported!")
 #------------------ INITIAL CODE----------------------------------
 
 
