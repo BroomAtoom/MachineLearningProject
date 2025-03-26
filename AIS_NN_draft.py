@@ -636,6 +636,11 @@ if clustering == 'distance':
     # x_val = x_val_augmented
     
     
+    # Scaling x_train
+    scaler =StandardScaler()
+    x_train_scaled = scaler.fit_transform(x_train)
+    
+    
     
     
     
