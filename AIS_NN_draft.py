@@ -31,7 +31,8 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 from collections import Counter
 from sklearn import preprocessing
-from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import LabelEncoder
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.exceptions import ConvergenceWarning
