@@ -618,32 +618,16 @@ if clustering == 'distance':
     print("K-means to cluster data")
     print("")
     print("K-clustering using distances...")
-    # kmeans = KMeans(n_clusters=n_clusters, random_state=random_seed, n_init='auto')
-    # kmeans.fit(x_train)
-    
-    # # Get distances to each cluster center
-    # train_distances = kmeans.transform(x_train)  
-    # test_distances = kmeans.transform(x_test)    
-    # val_distances = kmeans.transform(x_val)      
-    
-    # # Append distances as new features
-    # x_train_augmented = np.hstack((x_train, train_distances))
-    # x_test_augmented = np.hstack((x_test, test_distances))
-    # x_val_augmented = np.hstack((x_val, val_distances))
-    
-    # x_train = x_train_augmented
-    # x_test = x_test_augmented
-    # x_val = x_val_augmented
-    
-    
-    # Scaling x_train
+
     scaler =StandardScaler()
     x_train_scaled = scaler.fit_transform(x_train)
-    
+    x_test_scaled = scaler.transform(x_test)
+    x_validation_scaled = scaler.transform(x_val)
     k = n_clusters
     kmeans = KMeans(n_clusters=k, random_state=random_seed, n_init=10)
     cluster_labels = kmeans.fit_predict(x_train_scaled)
-    
+    print("")
+    print("Mapping clusters to x_train")
     # Convert to DataFrame for easier handling
     df = pd.DataFrame(x_train, columns=['lon', 'lat', 'speed'])
     df['cluster_label'] = cluster_labels  # Adding cluster labels as a new feature
@@ -659,7 +643,9 @@ else:
     print("No clustering")
     print("Using normal data")
         
-print("")        
+print("")      
+
+  
 #------------------ MACHINE LEARNING -----------------------------------------
 
 
