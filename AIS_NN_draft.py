@@ -614,28 +614,46 @@ match data_type:
         n_clusters = 8
         
 if clustering == 'distance':
-    
+        
+    k = n_clusters
     print("K-means to cluster data")
     print("")
-    print("K-clustering using distances...")
-
+    print("K-clustering using distances")
+    
+    print("Start scaling X matrices...")
     scaler =StandardScaler()
     x_train_scaled = scaler.fit_transform(x_train)
     x_test_scaled = scaler.transform(x_test)
     x_validation_scaled = scaler.transform(x_val)
-    k = n_clusters
-    kmeans = KMeans(n_clusters=k, random_state=random_seed, n_init=10)
-    cluster_labels = kmeans.fit_predict(x_train_scaled)
+    print("Scaling complete!")
     print("")
-    print("Mapping clusters to x_train")
-    # Convert to DataFrame for easier handling
-    df = pd.DataFrame(x_train, columns=['lon', 'lat', 'speed'])
-    df['cluster_label'] = cluster_labels  # Adding cluster labels as a new feature
+    print("Finding clusters...")
+    kmeans = KMeans(n_clusters=k, random_state=random_seed, n_init=10)
+    cluster_labels_train = kmeans.fit_predict(x_train_scaled)
+    print("Clusters found")
+    print("")
+    print("Mapping clusters to x_test and x_val...")
+    # Predict clusters for x_test and x_validation using the trained KMeans model
+    cluster_labels_test = kmeans.predict(x_test_scaled)
+    cluster_labels_validation = kmeans.predict(x_validation_scaled)
+    print("Mapping complete!")
+    # Add cluster labels to data
+    print("Creating dataframes...")
+    df_train = pd.DataFrame(x_train, columns=['lon', 'lat', 'speed'])
+    df_train['cluster_label'] = cluster_labels_train
     
-    # Convert back to NumPy array if needed
-    x_train_augmented = df.values  # Now contains lon, lat, speed, and cluster_label
-
-
+    df_test = pd.DataFrame(x_test, columns=['lon', 'lat', 'speed'])
+    df_test['cluster_label'] = cluster_labels_test
+    
+    df_validation = pd.DataFrame(x_val, columns=['lon', 'lat', 'speed'])
+    df_validation['cluster_label'] = cluster_labels_validation
+    print("Dataframes created!")
+    # Convert back to NumPy arrays if needed
+    x_train_augmented = df_train.values
+    x_test_augmented = df_test.values
+    x_validation_augmented = df_validation.values
+    print("X matrices updated!")
+    print("")
     print("Clustering complete!")
     print("")
 
