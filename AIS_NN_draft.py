@@ -576,31 +576,7 @@ match data_type:
 
 
 #------------------ K-MEANS DATA CLUSTERING ----------------------------------
-print("")
-print("Starting on K-means:")
-print("Starting Elbow-method to determine K...")
 
- # 'labels' or 'distance'
-n_clusters = 4      # Number of clusters (can be changed)
-
-# Range of cluster sizes to test
-k_range = range(1, 20)  # Test for 1 to 10 clusters
-inertia_values = []      # List to store inertia values
-
-# Loop through the range of cluster numbers
-for k in k_range:
-    # Fit K-Means on the training data for each k
-    kmeans = KMeans(n_clusters=k, random_state=random_seed, n_init='auto')
-    kmeans.fit(x_train)  # Fit the model
-    inertia_values.append(kmeans.inertia_)  # Store the inertia value
-
-# Plot Inertia vs Number of Clusters
-plt.plot(k_range, inertia_values, marker='o')
-plt.grid()
-plt.title('Elbow Method For Optimal k')
-plt.xlabel('Number of Clusters')
-plt.ylabel('Inertia')
-plt.show()
 
 match data_type:
     case 'CSV':
@@ -612,6 +588,33 @@ match data_type:
         
 
 if clustering == 'labels':
+    
+    print("")
+    print("Starting on K-means:")
+    print("Starting Elbow-method to determine K...")
+
+     # 'labels' or 'distance'
+    n_clusters = 4      # Number of clusters (can be changed)
+
+    # Range of cluster sizes to test
+    k_range = range(1, 20)  # Test for 1 to 10 clusters
+    inertia_values = []      # List to store inertia values
+
+    # Loop through the range of cluster numbers
+    for k in k_range:
+        # Fit K-Means on the training data for each k
+        kmeans = KMeans(n_clusters=k, random_state=random_seed, n_init='auto')
+        kmeans.fit(x_train)  # Fit the model
+        inertia_values.append(kmeans.inertia_)  # Store the inertia value
+
+    # Plot Inertia vs Number of Clusters
+    plt.plot(k_range, inertia_values, marker='o')
+    plt.grid()
+    plt.title('Elbow Method For Optimal k')
+    plt.xlabel('Number of Clusters')
+    plt.ylabel('Inertia')
+    plt.show()
+    
     print("K-means to cluster data")
     print("")
     print("K-clustering using labels...")
@@ -638,6 +641,32 @@ if clustering == 'labels':
     print("")
     
 elif clustering == 'distance':
+    print("")
+    print("Starting on K-means:")
+    print("Starting Elbow-method to determine K...")
+
+     # 'labels' or 'distance'
+    n_clusters = 4      # Number of clusters (can be changed)
+
+    # Range of cluster sizes to test
+    k_range = range(1, 20)  # Test for 1 to 10 clusters
+    inertia_values = []      # List to store inertia values
+
+    # Loop through the range of cluster numbers
+    for k in k_range:
+        # Fit K-Means on the training data for each k
+        kmeans = KMeans(n_clusters=k, random_state=random_seed, n_init='auto')
+        kmeans.fit(x_train)  # Fit the model
+        inertia_values.append(kmeans.inertia_)  # Store the inertia value
+
+    # Plot Inertia vs Number of Clusters
+    plt.plot(k_range, inertia_values, marker='o')
+    plt.grid()
+    plt.title('Elbow Method For Optimal k')
+    plt.xlabel('Number of Clusters')
+    plt.ylabel('Inertia')
+    plt.show()
+    
     print("K-means to cluster data")
     print("")
     print("K-clustering using distances...")
@@ -682,9 +711,9 @@ match learning_type:
         print("")
 
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(1),
+        train_nn = MLPClassifier(hidden_layer_sizes=(6,12,24,12,6),
                                  solver='adam',
-                                 max_iter=1,  
+                                 max_iter=50,  
                                  warm_start=True,  # Keeps the previous model state to continue from last fit
                                  random_state=random_seed)
 
@@ -696,7 +725,7 @@ match learning_type:
         test_accuracies = []  # To store test accuracies for each epoch
 
         # Maximum number of epochs
-        max_epochs = 1
+        max_epochs = 20
         for epoch in range(max_epochs):
             start_time = time.time()  # Record the start time for the epoch
             print(f"\nEpoch {epoch+1}/{max_epochs}")
