@@ -42,7 +42,7 @@ print("Modules imported!")
 
 #------------------ INPUT PARAMETERS ------------------------------------------
 
-learning_type = 'sklearn'
+learning_type = 'none'
 random_seed = 3411
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
@@ -751,9 +751,10 @@ match learning_type:
 
             # Create a filename that includes the test accuracy
             model_filename = os.path.join(model_dir, f'{data_type}_AIS_first_model_accuracy_{accuracy_test_str}%.joblib')
-            
+            model_filename_K_means = os.path.join(model_dir, f'{data_type}_AIS_first_model_accuracy_{accuracy_test_str}%_cluster_model.joblib')
             # Save the model
             joblib.dump(best_model, model_filename)
+            joblib.dump(kmeans, "kmeans_model.joblib")
             print(f"Best model saved to {model_filename}")
 
             # Capture the end time after the model is saved
