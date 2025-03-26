@@ -41,7 +41,7 @@ print("Modules imported!")
 
 #------------------ INPUT PARAMETERS ------------------------------------------
 
-learning_type = 'sklearn'
+learning_type = 'none'
 random_seed = 7736
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
@@ -612,34 +612,7 @@ match data_type:
         print("Using K = 8 ")
         n_clusters = 8
         
-
-if clustering == 'labels':
-
-    print("K-means to cluster data")
-    print("")
-    print("K-clustering using labels...")
-    
-    # Fit K-Means on the training data
-    kmeans = KMeans(n_clusters=n_clusters, random_state=random_seed, n_init='auto')
-    train_clusters = kmeans.fit_predict(x_train)      # Assigns a cluster to each sample
-    
-    # Assign clusters to test and validation sets
-    test_clusters = kmeans.predict(x_test)
-    val_clusters = kmeans.predict(x_val)
-    
-    # Add cluster labels as a new feature
-    x_train_augmented = np.column_stack((x_train, train_clusters))
-    x_test_augmented = np.column_stack((x_test, test_clusters))
-    x_val_augmented = np.column_stack((x_val, val_clusters))
-    
-    x_train = x_train_augmented
-    x_test = x_test_augmented
-    x_val = x_val_augmented
-    
-    print("Clustering complete!")
-    print("")
-    
-elif clustering == 'distance':
+if clustering == 'distance':
     
     print("K-means to cluster data")
     print("")
