@@ -751,7 +751,7 @@ match learning_type:
 
             # Create a filename that includes the test accuracy
             model_filename = os.path.join(model_dir, f'{data_type}_AIS_first_model_accuracy_{accuracy_test_str}%.joblib')
-            model_filename_K_means = os.path.join(model_dir, f'{data_type}_AIS_first_model_accuracy_{accuracy_test_str}%_cluster_model.joblib')
+            model_filename_K_means = os.path.join(model_dir, f'{data_type}_AIS_first_model_accuracy_{accuracy_test_str}%_cluster_file.joblib')
             # Save the model
             joblib.dump(best_model, model_filename)
             joblib.dump(kmeans, model_filename_K_means)
