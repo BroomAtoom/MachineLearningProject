@@ -644,8 +644,14 @@ if clustering == 'distance':
     kmeans = KMeans(n_clusters=k, random_state=random_seed, n_init=10)
     cluster_labels = kmeans.fit_predict(x_train_scaled)
     
+    # Convert to DataFrame for easier handling
+    df = pd.DataFrame(x_train, columns=['lon', 'lat', 'speed'])
+    df['cluster_label'] = cluster_labels  # Adding cluster labels as a new feature
     
-    
+    # Convert back to NumPy array if needed
+    x_train_augmented = df.values  # Now contains lon, lat, speed, and cluster_label
+
+
     print("Clustering complete!")
     print("")
 
