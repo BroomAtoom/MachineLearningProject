@@ -651,7 +651,11 @@ if clustering == 'distance':
     # Convert back to NumPy arrays if needed
     x_train_augmented = df_train.values
     x_test_augmented = df_test.values
-    x_validation_augmented = df_validation.values
+    x_val_augmented = df_validation.values
+    
+    x_train = x_train_augmented
+    x_test = x_test_augmented
+    x_val = x_val_augmented
     print("X matrices updated!")
     print("")
     print("Clustering complete!")
