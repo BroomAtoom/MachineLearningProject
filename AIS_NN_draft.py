@@ -42,7 +42,7 @@ print("Modules imported!")
 #------------------ INPUT PARAMETERS ------------------------------------------
 
 learning_type = 'sklearn'
-random_seed = 4920
+random_seed = 2310
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
 data_type = 'CSV'
@@ -793,6 +793,7 @@ match learning_type:
             txt_filename = os.path.join(model_dir, f'{data_type}_AIS_first_model_accuracy_{accuracy_test_str}%.txt')
             with open(txt_filename, "w") as f:
                 f.write(f"Date and Time: {current_time}\n")
+                f.write(f"Data used: {filename}\n")
                 f.write(f"Data used: {data_type}\n")
                 if clustering == 'labels':
                     f.write(f"Data clustering used: {clustering}\n")
