@@ -577,6 +577,32 @@ match data_type:
 
 #------------------ K-MEANS DATA CLUSTERING ----------------------------------
 
+    
+print("")
+print("Starting on K-means:")
+print("Starting Elbow-method to determine K...")
+
+ # 'labels' or 'distance'
+n_clusters = 4      # Number of clusters (can be changed)
+
+# Range of cluster sizes to test
+k_range = range(1, 20)  # Test for 1 to 10 clusters
+inertia_values = []      # List to store inertia values
+
+# Loop through the range of cluster numbers
+for k in k_range:
+    # Fit K-Means on the training data for each k
+    kmeans = KMeans(n_clusters=k, random_state=random_seed, n_init='auto')
+    kmeans.fit(x_train)  # Fit the model
+    inertia_values.append(kmeans.inertia_)  # Store the inertia value
+
+# Plot Inertia vs Number of Clusters
+plt.plot(k_range, inertia_values, marker='o')
+plt.grid()
+plt.title('Elbow Method For Optimal k')
+plt.xlabel('Number of Clusters')
+plt.ylabel('Inertia')
+plt.show()
 
 match data_type:
     case 'CSV':
@@ -588,38 +614,11 @@ match data_type:
         
 
 if clustering == 'labels':
-    
-    print("")
-    print("Starting on K-means:")
-    print("Starting Elbow-method to determine K...")
 
-     # 'labels' or 'distance'
-    n_clusters = 4      # Number of clusters (can be changed)
-
-    # Range of cluster sizes to test
-    k_range = range(1, 20)  # Test for 1 to 10 clusters
-    inertia_values = []      # List to store inertia values
-
-    # Loop through the range of cluster numbers
-    for k in k_range:
-        # Fit K-Means on the training data for each k
-        kmeans = KMeans(n_clusters=k, random_state=random_seed, n_init='auto')
-        kmeans.fit(x_train)  # Fit the model
-        inertia_values.append(kmeans.inertia_)  # Store the inertia value
-
-    # Plot Inertia vs Number of Clusters
-    plt.plot(k_range, inertia_values, marker='o')
-    plt.grid()
-    plt.title('Elbow Method For Optimal k')
-    plt.xlabel('Number of Clusters')
-    plt.ylabel('Inertia')
-    plt.show()
-    
     print("K-means to cluster data")
     print("")
     print("K-clustering using labels...")
     
-
     # Fit K-Means on the training data
     kmeans = KMeans(n_clusters=n_clusters, random_state=random_seed, n_init='auto')
     train_clusters = kmeans.fit_predict(x_train)      # Assigns a cluster to each sample
@@ -641,31 +640,6 @@ if clustering == 'labels':
     print("")
     
 elif clustering == 'distance':
-    print("")
-    print("Starting on K-means:")
-    print("Starting Elbow-method to determine K...")
-
-     # 'labels' or 'distance'
-    n_clusters = 4      # Number of clusters (can be changed)
-
-    # Range of cluster sizes to test
-    k_range = range(1, 20)  # Test for 1 to 10 clusters
-    inertia_values = []      # List to store inertia values
-
-    # Loop through the range of cluster numbers
-    for k in k_range:
-        # Fit K-Means on the training data for each k
-        kmeans = KMeans(n_clusters=k, random_state=random_seed, n_init='auto')
-        kmeans.fit(x_train)  # Fit the model
-        inertia_values.append(kmeans.inertia_)  # Store the inertia value
-
-    # Plot Inertia vs Number of Clusters
-    plt.plot(k_range, inertia_values, marker='o')
-    plt.grid()
-    plt.title('Elbow Method For Optimal k')
-    plt.xlabel('Number of Clusters')
-    plt.ylabel('Inertia')
-    plt.show()
     
     print("K-means to cluster data")
     print("")
