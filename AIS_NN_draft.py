@@ -47,7 +47,7 @@ random_seed = 5321
 # Wich data to train? 'JSON', 'CSV', or 'Both'
 data_type = 'CSV'
 
-clustering = 'none'
+clustering = 'labels'
 
 #------------------ INITIAL CODE-----------------------------------------------
 
@@ -583,7 +583,7 @@ print("Starting on K-means:")
 print("Starting Elbow-method to determine K...")
 
  # 'labels' or 'distance'
-n_clusters = 4      # Number of clusters (can be changed)
+n_clusters = 5      # Number of clusters (can be changed)
 
 # Range of cluster sizes to test
 k_range = range(1, 20)  # Test for 1 to 10 clusters
@@ -606,8 +606,8 @@ plt.show()
 
 match data_type:
     case 'CSV':
-        n_clusters = 13
-        print("Using K = 13 for elbow point")
+        n_clusters = 5
+        print("Using K = 5 for elbow point")
     case 'JSON':
         print("Using K = 8 ")
         n_clusters = 8
