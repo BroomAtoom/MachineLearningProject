@@ -43,7 +43,7 @@ print("Modules imported!")
 #------------------ INPUT PARAMETERS ------------------------------------------
 
 learning_type = 'sklearn'
-random_seed = 13
+random_seed = 13122
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
 data_type = 'CSV'
@@ -686,7 +686,7 @@ match learning_type:
         # Initialize the model
         train_nn = MLPClassifier(hidden_layer_sizes=(6,12,24,50,50,24,12,6),
                                  solver='adam',
-                                 max_iter=100,  
+                                 max_iter=2000,  
                                  warm_start=True,  # Keeps the previous model state to continue from last fit
                                  random_state=random_seed)
 
