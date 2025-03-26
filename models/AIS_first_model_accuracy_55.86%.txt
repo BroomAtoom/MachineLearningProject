@@ -1,0 +1,17 @@
+Random Seed: 21
+Navigation Status Entries: ['under-way-using-engine', 'moored', 'fishing']
+Train Percentage: 58.06%
+Test Percentage: 19.35%
+Validation Percentage: 22.58%
+
+MLPClassifier Parameters:
+Hidden Layer Sizes: (400,)
+Activation: 'relu'
+Solver: 'adam'
+Max Iter: 100
+Warm Start: True
+Random State: 21
+
+Max Epochs: 100
+Model Accuracy: 55.86%
+Total Time Taken: 3.35 minutes
