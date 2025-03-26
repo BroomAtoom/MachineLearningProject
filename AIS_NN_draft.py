@@ -42,7 +42,7 @@ print("Modules imported!")
 #------------------ INPUT PARAMETERS ------------------------------------------
 
 learning_type = 'sklearn'
-random_seed = 2310
+random_seed = 5321
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
 data_type = 'CSV'
@@ -711,9 +711,9 @@ match learning_type:
         print("")
 
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(6,12,24,12,6),
+        train_nn = MLPClassifier(hidden_layer_sizes=(6,12,24,50,50,24,12,6),
                                  solver='adam',
-                                 max_iter=50,  
+                                 max_iter=100,  
                                  warm_start=True,  # Keeps the previous model state to continue from last fit
                                  random_state=random_seed)
 
@@ -725,7 +725,7 @@ match learning_type:
         test_accuracies = []  # To store test accuracies for each epoch
 
         # Maximum number of epochs
-        max_epochs = 20
+        max_epochs = 100
         for epoch in range(max_epochs):
             start_time = time.time()  # Record the start time for the epoch
             print(f"\nEpoch {epoch+1}/{max_epochs}")
