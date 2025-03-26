@@ -47,7 +47,7 @@ random_seed = 5321
 # Wich data to train? 'JSON', 'CSV', or 'Both'
 data_type = 'CSV'
 
-clustering = 'labels'
+clustering = 'distance'
 
 #------------------ INITIAL CODE-----------------------------------------------
 
