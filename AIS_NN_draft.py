@@ -640,7 +640,9 @@ if clustering == 'distance':
     scaler =StandardScaler()
     x_train_scaled = scaler.fit_transform(x_train)
     
-    
+    k = n_clusters
+    kmeans = KMeans(n_clusters=k, random_state=random_seed, n_init=10)
+    cluster_labels = kmeans.fit_predict(x_train_scaled)
     
     
     
