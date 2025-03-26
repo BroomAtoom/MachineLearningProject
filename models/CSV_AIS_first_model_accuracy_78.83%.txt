@@ -1,0 +1,39 @@
+Data used: CSV
+Random Seed: 193
+Navigation Status Entries: ['under-way-using-engine', 'moored', 'fishing']
+Train Percentage: 77.42%
+Test Percentage: 9.68%
+Validation Percentage: 12.90%
+
+Navigation status counts for training set:
+under-way-using-engine: 24238
+moored: 25226
+undefined: 5517
+fishing: 6743
+at-anchor: 50
+under-way-sailing: 6
+
+Navigation status counts for testing set:
+under-way-using-engine: 2874
+moored: 2901
+undefined: 861
+fishing: 862
+
+Navigation status counts for validation set:
+under-way-using-engine: 3830
+moored: 4520
+undefined: 1091
+fishing: 1121
+at-anchor: 174
+
+MLPClassifier Parameters:
+Hidden Layer Sizes: (4,)
+Activation: 'tanh'
+Solver: 'adam'
+Max Iter: 2
+Warm Start: True
+Random State: 193
+
+Max Epochs: 5
+Model Accuracy: 78.83%
+Total Time Taken: 1.24 minutes
