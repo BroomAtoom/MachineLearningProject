@@ -43,12 +43,12 @@ print("Modules imported!")
 
 #------------------ INPUT PARAMETERS ------------------------------------------
 
-learning_type = 'none'
-random_seed = 575
+learning_type = 'sklearn'
+random_seed = 53521
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
 data_type = 'CSV'
-
+oversampling = "yes"
 clustering = 'distance'
 
 #------------------ INITIAL CODE-----------------------------------------------
@@ -678,6 +678,18 @@ else:
     print("Using normal data")
         
 print("")      
+
+
+#------------------ SMOTE OVERSAMPLING -----------------------------------------
+if oversampling == "yes":
+    print("Using SMOTE to detect oversampling...")
+    smote = SMOTE(sampling_strategy='auto', random_state=42)
+    X_train_resampled, y_train_resampled = smote.fit_resample(x_train, y_train)
+
+
+
+
+
 
   
 #------------------ MACHINE LEARNING -----------------------------------------
