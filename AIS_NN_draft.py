@@ -715,11 +715,11 @@ match learning_type:
         print("")
 
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(4,8,24,48,48,24,8,4),
+        train_nn = MLPClassifier(hidden_layer_sizes=(4,8,24,48,100,100,48,24,8,4),
                                  activation = "relu",
-                                 solver='adam',
-                                 max_iter=30,  
-                                 warm_start=True,  # Keeps the previous model state to continue from last fit
+                                 solver='sgd',
+                                 max_iter=100,  
+                                 warm_start= False,  # Keeps the previous model state to continue from last fit
                                  random_state=random_seed)
 
         # Initialize best validation accuracy and best model
