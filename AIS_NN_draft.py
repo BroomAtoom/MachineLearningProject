@@ -30,6 +30,7 @@ import matplotlib.pyplot as plt
 
 from datetime import datetime
 from collections import Counter
+from imblearn.over_sampling import SMOTE
 from sklearn import preprocessing
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import LabelEncoder
