@@ -695,7 +695,8 @@ match learning_type:
         print("")
 
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(6,12,24,400,400,24,12,6),
+        train_nn = MLPClassifier(hidden_layer_sizes=(4,8,4),
+                                 activation = "relu",
                                  solver='adam',
                                  max_iter=2000,  
                                  warm_start=True,  # Keeps the previous model state to continue from last fit
