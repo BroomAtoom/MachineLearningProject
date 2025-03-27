@@ -616,10 +616,6 @@ for i in range(len(dy_dx)):
         print("First x value where slope is between -1 and 0:", k_range[i])
         break
 
-
-
-
-
 match data_type:
     case 'CSV':
         n_clusters = 5
