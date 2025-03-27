@@ -48,7 +48,7 @@ random_seed = 53521
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
 data_type = 'CSV'
-oversampling = "yes"
+oversampling = "no"
 clustering = 'distance'
 
 #------------------ INITIAL CODE-----------------------------------------------
@@ -688,6 +688,14 @@ if oversampling == "yes":
     
     x_train = x_train_resampled
     y_train = y_train_resampled
+
+
+#------------------ LINEAR REGRESSION -----------------------------------------
+
+
+
+
+
 
   
 #------------------ MACHINE LEARNING -----------------------------------------
