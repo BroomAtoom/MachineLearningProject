@@ -42,7 +42,7 @@ print("Modules imported!")
 
 #------------------ INPUT PARAMETERS ------------------------------------------
 
-learning_type = 'sklearn'
+learning_type = 'none'
 random_seed = 575
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
