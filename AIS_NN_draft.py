@@ -45,7 +45,7 @@ print("Modules imported!")
 #------------------ INPUT PARAMETERS ------------------------------------------
 
 learning_type = 'none'
-random_seed = 53521
+random_seed = 3520010
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
 data_type = 'CSV'
@@ -715,7 +715,7 @@ match learning_type:
         print("")
 
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(4,8,24,8,4),
+        train_nn = MLPClassifier(hidden_layer_sizes=(4,8,24,48,48,24,8,4),
                                  activation = "relu",
                                  solver='adam',
                                  max_iter=30,  
