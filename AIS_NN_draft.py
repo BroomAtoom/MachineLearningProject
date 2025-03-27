@@ -605,6 +605,13 @@ plt.xlabel('Number of Clusters')
 plt.ylabel('Inertia')
 plt.show()
 
+
+# Making K dynamic by finding elbow point ( -1 < f'(x) < 0 )
+
+
+
+
+
 match data_type:
     case 'CSV':
         n_clusters = 5
