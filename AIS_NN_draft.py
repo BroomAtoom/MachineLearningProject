@@ -30,7 +30,6 @@ import matplotlib.pyplot as plt
 
 from datetime import datetime
 from collections import Counter
-from imblearn.over_sampling import SMOTE
 from sklearn import preprocessing
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import LabelEncoder
@@ -679,17 +678,6 @@ else:
     print("Using normal data")
         
 print("")      
-
-
-#------------------ SMOTE OVERSAMPLING -----------------------------------------
-if oversampling == "yes":
-    print("Using SMOTE to detect oversampling...")
-    smote = SMOTE(sampling_strategy='auto', random_state=42)
-    x_train_resampled, y_train_resampled = smote.fit_resample(x_train, y_train)
-    
-    x_train = x_train_resampled
-    y_train = y_train_resampled
-
 
 #------------------ LINEAR REGRESSION -----------------------------------------
 
