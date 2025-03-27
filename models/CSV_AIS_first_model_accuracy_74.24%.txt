@@ -1,0 +1,19 @@
+Date and Time: 2025-03-27 12:44:52
+Data used: AIS_2020_01_01_fullycleaned_top_0.3
+Data used: CSV
+Data clustering used: distance
+Number of clusters: 5
+Random Seed: 3520010
+Navigation Status Entries: ['under-way-using-engine', 'moored', 'fishing']
+
+MLPClassifier Parameters:
+Hidden Layer Sizes: (4, 8, 24, 48, 48, 24, 8, 4)
+Activation: 'relu'
+Solver: 'adam'
+Max Iter: 30
+Warm Start: True
+Random State: 3520010
+
+Max Epochs: 100
+Model Accuracy: 74.24%
+Total Time Taken: 0.19 minutes
