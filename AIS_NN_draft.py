@@ -689,10 +689,6 @@ if oversampling == "yes":
     x_train = x_train_resampled
     y_train = y_train_resampled
 
-
-
-
-
   
 #------------------ MACHINE LEARNING -----------------------------------------
 
