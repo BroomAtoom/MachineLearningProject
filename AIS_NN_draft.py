@@ -607,6 +607,14 @@ plt.show()
 
 
 # Making K dynamic by finding elbow point ( -1 < f'(x) < 0 )
+# Compute numerical derivative
+dy_dx = np.gradient(inertia_values, k_range)
+
+# Find the first x value where derivative is between -1 and 0
+for i in range(len(dy_dx)):
+    if -1 < dy_dx[i] < 0:
+        print("First x value where slope is between -1 and 0:", k_range[i])
+        break
 
 
 
