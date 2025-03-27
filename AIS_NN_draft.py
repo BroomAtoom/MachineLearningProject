@@ -38,12 +38,13 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.exceptions import ConvergenceWarning
 from sklearn.cluster import KMeans
+from sklearn.linear_model import LogisticRegression
 
 print("Modules imported!")
 
 #------------------ INPUT PARAMETERS ------------------------------------------
 
-learning_type = 'sklearn'
+learning_type = 'none'
 random_seed = 53521
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
