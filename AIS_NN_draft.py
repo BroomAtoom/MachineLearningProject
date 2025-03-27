@@ -684,8 +684,10 @@ print("")
 if oversampling == "yes":
     print("Using SMOTE to detect oversampling...")
     smote = SMOTE(sampling_strategy='auto', random_state=42)
-    X_train_resampled, y_train_resampled = smote.fit_resample(x_train, y_train)
-
+    x_train_resampled, y_train_resampled = smote.fit_resample(x_train, y_train)
+    
+    x_train = x_train_resampled
+    y_train = y_train_resampled
 
 
 
@@ -708,10 +710,10 @@ match learning_type:
         print("")
 
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(4,8,4),
+        train_nn = MLPClassifier(hidden_layer_sizes=(4,8,24,8,4),
                                  activation = "relu",
                                  solver='adam',
-                                 max_iter=2000,  
+                                 max_iter=30,  
                                  warm_start=True,  # Keeps the previous model state to continue from last fit
                                  random_state=random_seed)
 
