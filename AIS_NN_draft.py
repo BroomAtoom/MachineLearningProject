@@ -46,7 +46,7 @@ print("Modules imported!")
 #------------------ INPUT PARAMETERS ------------------------------------------
 
 learning_type = 'none'
-random_seed = 241
+random_seed = 402
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
 data_type = 'CSV'
@@ -486,9 +486,9 @@ def count_last_column_values(matrix):
     # Count occurrences
     count = Counter(values)
 
-    # Print the result
-    for value, freq in count.items():
-        print(f"{value} = {freq} times")
+    # Sort by key before printing
+    for value in sorted(count.keys()):  # Sorting the keys
+        print(f"{value} = {count[value]} times")
 
         
 
