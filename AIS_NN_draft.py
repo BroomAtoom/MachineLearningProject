@@ -45,7 +45,7 @@ print("Modules imported!")
 
 #------------------ INPUT PARAMETERS ------------------------------------------
 
-learning_type = 'none'
+learning_type = 'sklearn'
 random_seed = 241
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
@@ -610,25 +610,6 @@ plt.title('Elbow Method For Optimal k')
 plt.xlabel('Number of Clusters')
 plt.ylabel('Inertia')
 plt.show()
-
-
-# Making K dynamic by finding elbow point ( -1 < f'(x) < 0 )
-# # Compute numerical derivative
-# dy_dx = np.gradient(inertia_values, k_range)
-
-# # Find the first x value where derivative is between -1 and 0
-# for i in range(len(dy_dx)):
-#     if -1 < dy_dx[i] < 0:
-#         print("First x value where slope is between -1 and 0:", k_range[i])
-#         break
-
-# match data_type:
-#     case 'CSV':
-#         n_clusters = 5
-#         print("Using K = 5 for elbow point")
-#     case 'JSON':
-#         print("Using K = 8 ")
-#         n_clusters = 8
         
 if clustering == 'distance':
         
@@ -645,6 +626,7 @@ if clustering == 'distance':
     print("Scaling complete!")
     print("")
     print("Finding clusters...")
+    
     kmeans = KMeans(n_clusters=k, random_state=random_seed, n_init=10)
     cluster_labels_train = kmeans.fit_predict(x_train_scaled)
     print("Clusters found")
@@ -701,7 +683,7 @@ match learning_type:
         print("")
 
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(4,8,24,48,100,100,48,24,8,4),
+        train_nn = MLPClassifier(hidden_layer_sizes=(4,4),
                                  activation = "relu",
                                  solver='sgd',
                                  max_iter=100,  
