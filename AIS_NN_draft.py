@@ -46,7 +46,7 @@ print("Modules imported!")
 #------------------ INPUT PARAMETERS ------------------------------------------
 
 learning_type = 'none'
-random_seed = 402
+random_seed = 636
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
 data_type = 'CSV'
@@ -688,11 +688,23 @@ print("")
 # Ensure the directory exists
 os.makedirs("matrices", exist_ok=True)
 
-# Making filenames for the matrices
+# Define the parent folder
+parent_folder = "matrices"
 
+# Define the subfolder name dynamically
+subfolder_name = f"{filename}_random_seed={random_seed}"
 
+# Create the full path
+full_path = os.path.join(parent_folder, subfolder_name)
+
+# Ensure the subfolder exists
+os.makedirs(full_path, exist_ok=True)
+
+print(f"Subfolder '{full_path}' created successfully!")
 # Save the matrix inside the "Matrices" folder
-np.save("matrices/full_train_matrix.npy", x_train)
+np.save(os.path.join(full_path, 'train_matrix'), full_train_matrix)
+np.save(os.path.join(full_path, 'test_matrix'), full_test_matrix)
+np.save(os.path.join(full_path, 'val_matrix'), full_val_matrix)
 
 
 #------------------ MACHINE LEARNING ------------------------------------------
