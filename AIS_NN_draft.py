@@ -51,6 +51,7 @@ random_seed = 402
 # Wich data to train? 'JSON', 'CSV', or 'Both'
 data_type = 'CSV'
 clustering = 'distance'
+elbow_methode = 'no' # To make an elbow plot --> input yes
 
 #------------------ INITIAL CODE-----------------------------------------------
 
@@ -597,20 +598,25 @@ xy_train = np.column_stack((x_train,y_train))
 xy_test = np.column_stack((x_test,y_test))
 xy_val = np.column_stack((x_val,y_val))
 
-# Loop through the range of cluster numbers
-for k in k_range:
-    # Fit K-Means on the training data for each k
-    kmeans = KMeans(n_clusters=k, random_state=random_seed, n_init='auto')
-    kmeans.fit(xy_train)                     # Fit the model
-    inertia_values.append(kmeans.inertia_)  # Store the inertia value
 
-# Plot Inertia vs Number of Clusters
-plt.plot(k_range, inertia_values, marker='o')
-plt.grid()
-plt.title('Elbow Method For Optimal k')
-plt.xlabel('Number of Clusters')
-plt.ylabel('Inertia')
-plt.show()
+if elbow_methode == 'yes':
+    print("Making Elbow-plot for data")
+    # Loop through the range of cluster numbers
+    for k in k_range:
+        # Fit K-Means on the training data for each k
+        kmeans = KMeans(n_clusters=k, random_state=random_seed, n_init='auto')
+        kmeans.fit(xy_train)                     # Fit the model
+        inertia_values.append(kmeans.inertia_)  # Store the inertia value
+        # Plot Inertia vs Number of Clusters
+        plt.plot(k_range, inertia_values, marker='o')
+        plt.grid()
+        plt.title('Elbow Method For Optimal k')
+        plt.xlabel('Number of Clusters')
+        plt.ylabel('Inertia')
+        plt.show()
+else:
+    print("No Elbow-plot")
+
         
 if clustering == 'distance':
         
@@ -675,7 +681,6 @@ print("")
 
   
 #------------------ MACHINE LEARNING -----------------------------------------
-
 
 match learning_type:
     case 'sklearn':
