@@ -10,11 +10,13 @@ print("Importing Modules...")
 
 import os
 import numpy as np
+
 print("Import complete!")
 print("")
 
 
 #------------------------- LOADING DATA ---------------------------------------
+
 print("Loading Matrices...")
 # Define the parent folder and subfolder
 parent_folder = "matrices"
@@ -39,3 +41,28 @@ for matrix_file in matrix_files:
     globals()[variable_name] = matrix
 
 print("Matrices loaded!")
+
+x_train = np.delete(train_matrix, 3, axis=1)
+x_test = np.delete(test_matrix, 3, axis=1)
+x_val = np.delete(val_matrix, 3, axis=1)
+
+y_train = train_matrix[:, 3]
+y_test = test_matrix[:, 3]
+y_val = val_matrix[:, 3]
+
+#--------------------- FINDING RANDOM SEED WITH REGEX -------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
