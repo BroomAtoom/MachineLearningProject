@@ -14,6 +14,8 @@ Created on Sat Mar 15 13:29:56 2025
     # - make apart models for each cluster
     # - after make model, do validation and evt. remove foute clusters
 
+#TODE code cleanup (remove JSON for example)
+
 print("Importing modules...")
 
 import os
@@ -590,11 +592,15 @@ n_clusters = 5      # Number of clusters (can be changed)
 k_range = range(1, 20)  # Test for 1 to 10 clusters
 inertia_values = []      # List to store inertia values
 
+# Append x_train aand y_train for clustering
+
+cluster_train_matrix = np.column_stack((x_train,y_train))
+
 # Loop through the range of cluster numbers
 for k in k_range:
     # Fit K-Means on the training data for each k
     kmeans = KMeans(n_clusters=k, random_state=random_seed, n_init='auto')
-    kmeans.fit(x_train)  # Fit the model
+    kmeans.fit(x_train)                     # Fit the model
     inertia_values.append(kmeans.inertia_)  # Store the inertia value
 
 # Plot Inertia vs Number of Clusters
@@ -677,13 +683,6 @@ else:
     print("Using normal data")
         
 print("")      
-
-#------------------ LINEAR REGRESSION -----------------------------------------
-
-
-
-
-
 
   
 #------------------ MACHINE LEARNING -----------------------------------------
