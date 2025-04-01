@@ -9,18 +9,21 @@ print("")
 print("Importing Modules...")
 
 import os
+import re
 import numpy as np
 
 print("Import complete!")
 print("")
 
 
+learning_type = 'none'
+
 #------------------------- LOADING DATA ---------------------------------------
 
 print("Loading Matrices...")
 # Define the parent folder and subfolder
 parent_folder = "matrices"
-subfolder_name = "AIS_2020_01_07_fullycleaned_top_0.5_random_seed=411"  # Change dynamically if needed
+subfolder_name = "AIS_2020_01_05_fullycleaned_random_seed=7512"  # Change dynamically if needed
 full_path = os.path.join(parent_folder, subfolder_name)
 
 # List all .npy files in the subfolder
@@ -52,9 +55,180 @@ y_val = val_matrix[:, 3]
 
 #--------------------- FINDING RANDOM SEED WITH REGEX -------------------------
 
+# Define the regex pattern to extract the value of random_seed
+pattern = r"random_seed=(\d+)"
 
+# Search for the pattern
+match = re.search(pattern, subfolder_name)
 
+# Check if the pattern is found and extract the value
+if match:
+    random_seed = match.group(1)
+    print(f"Random Seed Value: {random_seed}")
+else:
+    print("Random seed not found")
 
+#------------------ MACHINE LEARNING ------------------------------------------
+
+match learning_type:
+    case 'sklearn':
+        print('Sklearn is being used...')
+        print("")
+        print("Apply mapping...")
+        # label_map = {0: 0, 1: 1, 5: 2, 7: 3}                          # Map original labels to 0,1,2,3
+        # y_train_mapped = np.array([label_map[y] for y in y_train])  # Apply mapping to training labels
+        # y_val = np.array([label_map[y] for y in y_val])             # Apply mapping to validation labels
+        # y_test = np.array([label_map[y] for y in y_test])           # Apply mapping to validation labels
+        print("Mapping finished!")
+        print("")
+
+        # Initialize the model
+        train_nn = MLPClassifier(hidden_layer_sizes=(4,4),
+                                 activation = "relu",
+                                 solver='sgd',
+                                 max_iter=100,  
+                                 warm_start= False,  # Keeps the previous model state to continue from last fit
+                                 random_state=random_seed)
+
+        # Initialize best validation accuracy and best model
+        best_val_accuracy = 0.0
+        best_model = None
+        epoch_times = []  # To store the time taken for each epoch
+        val_accuracies = []  # To store validation accuracies for each epoch
+        test_accuracies = []  # To store test accuracies for each epoch
+
+        # Maximum number of epochs
+        max_epochs = 100
+        for epoch in range(max_epochs):
+            start_time = time.time()  # Record the start time for the epoch
+            print(f"\nEpoch {epoch+1}/{max_epochs}")
+
+            # Train the model for one epoch
+            train_nn.fit(x_train, y_train)
+
+            # Predict on the validation and test set
+            pred_val = train_nn.predict(x_val)
+            accuracy_val = accuracy_score(y_val, pred_val)
+            pred_test = train_nn.predict(x_test)
+            accuracy_test = accuracy_score(y_test, pred_test)
+
+            print(f"Validation Accuracy: {accuracy_val * 100:.2f}%")
+            print(f"Test Accuracy: {accuracy_test * 100:.2f}%")
+
+            # Store accuracies for plotting
+            val_accuracies.append(accuracy_val)
+            test_accuracies.append(accuracy_test)
+
+            # Check if the current model is better than the previous best model
+            if accuracy_val > best_val_accuracy:
+                best_val_accuracy = accuracy_val
+                best_model = train_nn  # Save the current model as the best model
+                print(f"New best model found! Validation Accuracy: {accuracy_val * 100:.2f}%")
+
+            # Record the end time for the epoch
+            end_time = time.time()
+            epoch_duration = end_time - start_time  # Duration of the current epoch in seconds
+            epoch_times.append(epoch_duration)
+
+            # Calculate the average time per epoch based on previous epochs
+            avg_epoch_time = np.mean(epoch_times)
+
+            # Estimate remaining time using the average epoch time
+            remaining_epochs = max_epochs - (epoch + 1)
+            remaining_time = (remaining_epochs * avg_epoch_time) / 60  # In minutes
+            
+            # Calculate memory usage
+            current_memory = memory_usage()
+            print(f"Memory usage after epoch {epoch+1}: {current_memory:.2f} MB")
+            # Print the remaining time in a readable format
+            print(f"Time taken for epoch {epoch+1}: {epoch_duration:.2f} seconds")
+            print(f"Estimated remaining time: {remaining_time:.2f} minutes")
+
+        # After training, save the best model with accuracy in the filename
+        if best_model is not None:
+            # Use test accuracy for final model filename
+            accuracy_test_str = f"{accuracy_test * 100:.2f}"  # Use test accuracy instead of validation accuracy
+
+            # Create a filename that includes the test accuracy
+            model_filename = os.path.join(model_dir, f'{data_type}_AIS_first_model_accuracy_{accuracy_test_str}%.joblib')
+            model_filename_K_means = os.path.join(model_dir, f'{data_type}_AIS_first_model_accuracy_{accuracy_test_str}%_cluster_file.joblib')
+            # Save the model
+            joblib.dump(best_model, model_filename)
+            joblib.dump(kmeans, model_filename_K_means)
+            print(f"Best model saved to {model_filename}")
+
+            # Capture the end time after the model is saved
+            end_training_time = time.time()
+            
+            # Calculate the total time taken for training and saving the model
+            total_training_time = (end_training_time - start_training_time) / 60  # Convert to minutes
+            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Format: YYYY-MM-DD HH:MM:SS
+            # Create the text file with model details
+            txt_filename = os.path.join(model_dir, f'{data_type}_AIS_first_model_accuracy_{accuracy_test_str}%.txt')
+            with open(txt_filename, "w") as f:
+                f.write(f"Date and Time: {current_time}\n")
+                f.write(f"Data used: {filename}\n")
+                f.write(f"Data used: {data_type}\n")
+                if clustering == 'labels':
+                    f.write(f"Data clustering used: {clustering}\n")
+                    f.write(f"Number of clusters: {n_clusters}\n")
+                elif clustering == 'distance':
+                    f.write(f"Data clustering used: {clustering}\n")
+                    f.write(f"Number of clusters: {n_clusters}\n")
+                else:
+                    f.write(f"Data clustering used: None \n")
+                f.write(f"Random Seed: {random_seed}\n")
+                f.write(f"Navigation Status Entries: {navigation_status_entry}\n")
+                # f.write(f"Train Percentage: {train_split / total_files * 100:.2f}%\n")
+                # f.write(f"Test Percentage: {(test_split - train_split) / total_files * 100:.2f}%\n")
+                # f.write(f"Validation Percentage: {(total_files - test_split) / total_files * 100:.2f}%\n")
+                # f.write(f"\nNavigation status counts for training set:\n")
+            
+                # for status, count in train_status_counts.items():
+                #     f.write(f"{status}: {count}\n")
+            
+                # f.write(f"\nNavigation status counts for testing set:\n")
+                # for status, count in test_status_counts.items():
+                #     f.write(f"{status}: {count}\n")
+            
+                # f.write(f"\nNavigation status counts for validation set:\n")
+                # for status, count in val_status_counts.items():
+                #     f.write(f"{status}: {count}\n")
+
+                f.write(f"\nMLPClassifier Parameters:\n")
+                f.write(f"Hidden Layer Sizes: {train_nn.hidden_layer_sizes}\n")
+                f.write(f"Activation: '{train_nn.activation}'\n")
+                f.write(f"Solver: '{train_nn.solver}'\n")
+                f.write(f"Max Iter: {train_nn.max_iter}\n")
+                f.write(f"Warm Start: {train_nn.warm_start}\n")
+                f.write(f"Random State: {train_nn.random_state}\n")
+                f.write(f"\nMax Epochs: {max_epochs}\n")
+                f.write(f"Model Accuracy: {accuracy_test * 100:.2f}%\n")
+                f.write(f"Total Time Taken: {total_training_time:.2f} minutes\n")
+
+            print(f"\nDetails written to {txt_filename}")
+        else:
+            print("No model was saved because no improvement in validation accuracy was found.")
+
+        # Plot the validation and test accuracies over epochs
+        plt.figure(figsize=(10, 6))
+        plt.plot(range(1, max_epochs + 1), val_accuracies, label='Validation Accuracy', color='blue')
+        plt.plot(range(1, max_epochs + 1), test_accuracies, label='Test Accuracy', color='green')
+        plt.xlabel('Epoch')
+        plt.ylabel('Accuracy')
+        plt.title('Validation and Test Accuracy per Epoch')
+        plt.legend()
+        plt.grid(True)
+        plt.show()
+
+        # Plot the time taken for each epoch
+        plt.figure(figsize=(10, 6))
+        plt.plot(range(1, max_epochs + 1), epoch_times, label='Time per Epoch', color='red')
+        plt.xlabel('Epoch')
+        plt.ylabel('Time (seconds)')
+        plt.title('Time Taken per Epoch')
+        plt.grid(True)
+        plt.show()
 
 
 
