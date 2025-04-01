@@ -589,7 +589,7 @@ print("Starting Elbow-method to determine K...")
 n_clusters = 5      # Number of clusters (can be changed)
 
 # Range of cluster sizes to test
-k_range = range(1, 20)  # Test for 1 to 10 clusters
+k_range = range(1, 20)   # Test for 1 to 10 clusters
 inertia_values = []      # List to store inertia values
 
 # Append x_train aand y_train for clustering
