@@ -10,13 +10,39 @@ print("Importing Modules...")
 
 import os
 import re
+import time
+import warnings
+import psutil
+import joblib
 import numpy as np
+
+from datetime import datetime
+from collections import Counter
+from sklearn import preprocessing
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import LabelEncoder
+from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.exceptions import ConvergenceWarning
+from sklearn.cluster import KMeans
+from sklearn.linear_model import LogisticRegression
 
 print("Import complete!")
 print("")
 
 
 learning_type = 'none'
+
+
+start_training_time = time.time()                               #Start time to track total run time
+warnings.filterwarnings("ignore", category=ConvergenceWarning)  #Disable iter=1 warning in Sklearn
+
+# Make function to track memory usage (used in the Machine Learning part)
+def memory_usage():
+    """Returns memory usage in MB"""
+    process = psutil.Process(os.getpid())
+    memory_info = process.memory_info()
+    return memory_info.rss / 1024 / 1024  # Convert bytes to MB
 
 #------------------------- LOADING DATA ---------------------------------------
 
