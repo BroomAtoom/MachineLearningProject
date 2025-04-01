@@ -679,8 +679,16 @@ else:
         
 print("")      
 
-  
-#------------------ MACHINE LEARNING -----------------------------------------
+#------------------ SAVING MATRICES FOR LATER USE -----------------------------
+
+# Ensure the directory exists
+os.makedirs("Matrices", exist_ok=True)
+
+# Save the matrix inside the "Matrices" folder
+np.save("Matrices/x_train.npy", x_train)
+
+
+#------------------ MACHINE LEARNING ------------------------------------------
 
 match learning_type:
     case 'sklearn':
