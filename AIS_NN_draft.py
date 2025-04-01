@@ -10,9 +10,9 @@ Created on Sat Mar 15 13:29:56 2025
 
 
 #TODO make new clustering
-#TODO determine number of clusters
-#TODO make validations
-#TODO make linear regression
+    # - add nav statuses in cluster
+    # - make apart models for each cluster
+    # - after make model, do validation and evt. remove foute clusters
 
 print("Importing modules...")
 
@@ -607,22 +607,22 @@ plt.show()
 
 
 # Making K dynamic by finding elbow point ( -1 < f'(x) < 0 )
-# Compute numerical derivative
-dy_dx = np.gradient(inertia_values, k_range)
+# # Compute numerical derivative
+# dy_dx = np.gradient(inertia_values, k_range)
 
-# Find the first x value where derivative is between -1 and 0
-for i in range(len(dy_dx)):
-    if -1 < dy_dx[i] < 0:
-        print("First x value where slope is between -1 and 0:", k_range[i])
-        break
+# # Find the first x value where derivative is between -1 and 0
+# for i in range(len(dy_dx)):
+#     if -1 < dy_dx[i] < 0:
+#         print("First x value where slope is between -1 and 0:", k_range[i])
+#         break
 
-match data_type:
-    case 'CSV':
-        n_clusters = 5
-        print("Using K = 5 for elbow point")
-    case 'JSON':
-        print("Using K = 8 ")
-        n_clusters = 8
+# match data_type:
+#     case 'CSV':
+#         n_clusters = 5
+#         print("Using K = 5 for elbow point")
+#     case 'JSON':
+#         print("Using K = 8 ")
+#         n_clusters = 8
         
 if clustering == 'distance':
         
