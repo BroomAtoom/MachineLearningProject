@@ -657,6 +657,10 @@ if clustering == 'distance':
     
     # Convert back to NumPy arrays if needed
     
+    full_train_matrix = df_train.values
+    full_test_matrix = df_test.values
+    full_val_matrix = df_validation.values
+    
     x_train_dropped = df_train.drop(columns=['nav status'])
     x_test_dropped = df_test.drop(columns=['nav status'])
     x_val_dropped = df_validation.drop(columns=['nav status'])
@@ -682,10 +686,13 @@ print("")
 #------------------ SAVING MATRICES FOR LATER USE -----------------------------
 
 # Ensure the directory exists
-os.makedirs("Matrices", exist_ok=True)
+os.makedirs("matrices", exist_ok=True)
+
+# Making filenames for the matrices
+
 
 # Save the matrix inside the "Matrices" folder
-np.save("Matrices/x_train.npy", x_train)
+np.save("matrices/full_train_matrix.npy", x_train)
 
 
 #------------------ MACHINE LEARNING ------------------------------------------
