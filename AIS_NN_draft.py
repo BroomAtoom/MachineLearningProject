@@ -46,7 +46,7 @@ print("Modules imported!")
 #------------------ INPUT PARAMETERS ------------------------------------------
 
 learning_type = 'none'
-random_seed = 636
+random_seed = 411
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
 data_type = 'CSV'
@@ -695,17 +695,21 @@ parent_folder = "matrices"
 subfolder_name = f"{filename}_random_seed={random_seed}"
 
 # Create the full path
-full_path = os.path.join(parent_folder, subfolder_name)
+matrix_path = os.path.join(parent_folder, subfolder_name)
 
 # Ensure the subfolder exists
-os.makedirs(full_path, exist_ok=True)
+os.makedirs(matrix_path, exist_ok=True)
 
-print(f"Subfolder '{full_path}' created successfully!")
+print(f"Subfolder '{matrix_path}' created successfully!")
+
 # Save the matrix inside the "Matrices" folder
-np.save(os.path.join(full_path, 'train_matrix'), full_train_matrix)
-np.save(os.path.join(full_path, 'test_matrix'), full_test_matrix)
-np.save(os.path.join(full_path, 'val_matrix'), full_val_matrix)
+np.save(os.path.join(matrix_path, 'train_matrix'), full_train_matrix)
+np.save(os.path.join(matrix_path, 'test_matrix'), full_test_matrix)
+np.save(os.path.join(matrix_path, 'val_matrix'), full_val_matrix)
 
+# Save the K_means file
+model_filename_K_means_beforeNN = os.path.join(matrix_path, 'K_means_file.joblib')
+joblib.dump(kmeans, model_filename_K_means_beforeNN)
 
 #------------------ MACHINE LEARNING ------------------------------------------
 
