@@ -45,7 +45,7 @@ print("Modules imported!")
 
 #------------------ INPUT PARAMETERS ------------------------------------------
 
-learning_type = 'sklearn'
+learning_type = 'none'
 random_seed = 241
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
@@ -585,7 +585,6 @@ print("")
 print("Starting on K-means:")
 print("Starting Elbow-method to determine K...")
 
- # 'labels' or 'distance'
 n_clusters = 5      # Number of clusters (can be changed)
 
 # Range of cluster sizes to test
@@ -594,13 +593,15 @@ inertia_values = []      # List to store inertia values
 
 # Append x_train aand y_train for clustering
 
-cluster_train_matrix = np.column_stack((x_train,y_train))
+xy_train = np.column_stack((x_train,y_train))
+xy_test = np.column_stack((x_test,y_test))
+xy_val = np.column_stack((x_val,y_val))
 
 # Loop through the range of cluster numbers
 for k in k_range:
     # Fit K-Means on the training data for each k
     kmeans = KMeans(n_clusters=k, random_state=random_seed, n_init='auto')
-    kmeans.fit(x_train)                     # Fit the model
+    kmeans.fit(xy_train)                     # Fit the model
     inertia_values.append(kmeans.inertia_)  # Store the inertia value
 
 # Plot Inertia vs Number of Clusters
@@ -619,38 +620,44 @@ if clustering == 'distance':
     print("K-clustering using distances")
     
     print("Start scaling X matrices...")
-    scaler =StandardScaler()
-    x_train_scaled = scaler.fit_transform(x_train)
-    x_test_scaled = scaler.transform(x_test)
-    x_validation_scaled = scaler.transform(x_val)
+    scaler = StandardScaler()
+    xy_train_scaled = scaler.fit_transform(xy_train)
+    xy_test_scaled = scaler.transform(xy_test)
+    xy_validation_scaled = scaler.transform(xy_val)
     print("Scaling complete!")
     print("")
     print("Finding clusters...")
     
     kmeans = KMeans(n_clusters=k, random_state=random_seed, n_init=10)
-    cluster_labels_train = kmeans.fit_predict(x_train_scaled)
+    cluster_labels_train = kmeans.fit_predict(xy_train_scaled)
     print("Clusters found")
     print("")
     print("Mapping clusters to x_test and x_val...")
     # Predict clusters for x_test and x_validation using the trained KMeans model
-    cluster_labels_test = kmeans.predict(x_test_scaled)
-    cluster_labels_validation = kmeans.predict(x_validation_scaled)
+    cluster_labels_test = kmeans.predict(xy_test_scaled)
+    cluster_labels_validation = kmeans.predict(xy_validation_scaled)
     print("Mapping complete!")
     # Add cluster labels to data
     print("Creating dataframes...")
-    df_train = pd.DataFrame(x_train, columns=['lon', 'lat', 'speed'])
+    df_train = pd.DataFrame(xy_train, columns=['lon', 'lat', 'speed','nav status'])
     df_train['cluster_label'] = cluster_labels_train
     
-    df_test = pd.DataFrame(x_test, columns=['lon', 'lat', 'speed'])
+    df_test = pd.DataFrame(xy_test, columns=['lon', 'lat', 'speed','nav status'])
     df_test['cluster_label'] = cluster_labels_test
     
-    df_validation = pd.DataFrame(x_val, columns=['lon', 'lat', 'speed'])
+    df_validation = pd.DataFrame(xy_val, columns=['lon', 'lat', 'speed','nav status'])
     df_validation['cluster_label'] = cluster_labels_validation
     print("Dataframes created!")
+    
     # Convert back to NumPy arrays if needed
-    x_train_augmented = df_train.values
-    x_test_augmented = df_test.values
-    x_val_augmented = df_validation.values
+    
+    x_train_dropped = df_train.drop(columns=['nav status'])
+    x_test_dropped = df_test.drop(columns=['nav status'])
+    x_val_dropped = df_validation.drop(columns=['nav status'])
+    
+    x_train_augmented = x_train_dropped.values
+    x_test_augmented = x_test_dropped.values
+    x_val_augmented = x_val_dropped.values
     
     x_train = x_train_augmented
     x_test = x_test_augmented
