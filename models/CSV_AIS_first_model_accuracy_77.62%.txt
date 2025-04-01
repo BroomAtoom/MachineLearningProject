@@ -1,4 +1,4 @@
-Date and Time: 2025-04-01 13:13:43
+Date and Time: 2025-04-01 13:37:19
 Data used: AIS_2020_01_01_fullycleaned_top_0.3
 Data used: CSV
 Data clustering used: distance
@@ -16,4 +16,4 @@ Random State: 241
 
 Max Epochs: 100
 Model Accuracy: 77.62%
-Total Time Taken: 0.64 minutes
+Total Time Taken: 1.19 minutes

@@ -2,14 +2,14 @@ import os
 import pandas as pd
 
 def main():
-    filename = "AIS_2020_01_01.csv"
-    output_filename = "AIS_2020_01_01_fullycleaned.csv"
+    filename = "AIS_2020_01_07.csv"
+    output_filename = "AIS_2020_01_07_fullycleaned.csv"
     input_folder_name = "COAST_NOAA_AIS_DATA"
     output_folder_name = "AIS_DATA_CLEANED"
     file_path = os.path.join(input_folder_name,filename)
     output_path = os.path.join(output_folder_name, output_filename)
     preprocess_AIS(file_path, output_path)
-    df = select_head(output_path, 0.3)
+    df = select_head(output_path, 0.5)
     print(df)
 
 
