@@ -15,24 +15,25 @@ import warnings
 import psutil
 import joblib
 import numpy as np
+import matplotlib.pyplot as plt
 
 from datetime import datetime
-from collections import Counter
-from sklearn import preprocessing
-from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import LabelEncoder
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.exceptions import ConvergenceWarning
-from sklearn.cluster import KMeans
-from sklearn.linear_model import LogisticRegression
 
 print("Import complete!")
 print("")
 
+#----------------------- INITIAL ---------------------------------------------
 
-learning_type = 'none'
+learning_type = 'sklearn'
+data_type = 'CSV'
 
+# Create the 'new_models' folder if it doesn't exist
+model_dir = 'new_models'
+if not os.path.exists(model_dir):
+    os.makedirs(model_dir)
 
 start_training_time = time.time()                               #Start time to track total run time
 warnings.filterwarnings("ignore", category=ConvergenceWarning)  #Disable iter=1 warning in Sklearn
@@ -71,6 +72,7 @@ for matrix_file in matrix_files:
 
 print("Matrices loaded!")
 
+# Example of matrix manipulations (modify if necessary)
 x_train = np.delete(train_matrix, 3, axis=1)
 x_test = np.delete(test_matrix, 3, axis=1)
 x_val = np.delete(val_matrix, 3, axis=1)
@@ -78,6 +80,17 @@ x_val = np.delete(val_matrix, 3, axis=1)
 y_train = train_matrix[:, 3]
 y_test = test_matrix[:, 3]
 y_val = val_matrix[:, 3]
+
+# Load the models
+print("Loading models...")
+for root, dirs, files in os.walk(full_path):  # Walk only through the current subfolder
+    for file in files:
+        if file.endswith('.joblib'):  # Only process .joblib files
+            model_path = os.path.join(root, file)
+            print(f"Loading model from {model_path}")
+            K_model = joblib.load(model_path)
+
+print("K_model loaded!")
 
 #--------------------- FINDING RANDOM SEED WITH REGEX -------------------------
 
@@ -89,7 +102,7 @@ match = re.search(pattern, subfolder_name)
 
 # Check if the pattern is found and extract the value
 if match:
-    random_seed = match.group(1)
+    random_seed = int(match.group(1))
     print(f"Random Seed Value: {random_seed}")
 else:
     print("Random seed not found")
@@ -100,20 +113,16 @@ match learning_type:
     case 'sklearn':
         print('Sklearn is being used...')
         print("")
-        print("Apply mapping...")
-        # label_map = {0: 0, 1: 1, 5: 2, 7: 3}                          # Map original labels to 0,1,2,3
-        # y_train_mapped = np.array([label_map[y] for y in y_train])  # Apply mapping to training labels
-        # y_val = np.array([label_map[y] for y in y_val])             # Apply mapping to validation labels
-        # y_test = np.array([label_map[y] for y in y_test])           # Apply mapping to validation labels
+        print("Apply mapping...") 
         print("Mapping finished!")
         print("")
 
         # Initialize the model
         train_nn = MLPClassifier(hidden_layer_sizes=(4,4),
                                  activation = "relu",
-                                 solver='sgd',
-                                 max_iter=100,  
-                                 warm_start= False,  # Keeps the previous model state to continue from last fit
+                                 solver='adam',
+                                 max_iter=10,  
+                                 warm_start= True,  # Keeps the previous model state to continue from last fit
                                  random_state=random_seed)
 
         # Initialize best validation accuracy and best model
@@ -124,7 +133,7 @@ match learning_type:
         test_accuracies = []  # To store test accuracies for each epoch
 
         # Maximum number of epochs
-        max_epochs = 100
+        max_epochs = 10
         for epoch in range(max_epochs):
             start_time = time.time()  # Record the start time for the epoch
             print(f"\nEpoch {epoch+1}/{max_epochs}")
@@ -180,7 +189,7 @@ match learning_type:
             model_filename_K_means = os.path.join(model_dir, f'{data_type}_AIS_first_model_accuracy_{accuracy_test_str}%_cluster_file.joblib')
             # Save the model
             joblib.dump(best_model, model_filename)
-            joblib.dump(kmeans, model_filename_K_means)
+            joblib.dump(K_model, model_filename_K_means)
             print(f"Best model saved to {model_filename}")
 
             # Capture the end time after the model is saved
@@ -193,18 +202,17 @@ match learning_type:
             txt_filename = os.path.join(model_dir, f'{data_type}_AIS_first_model_accuracy_{accuracy_test_str}%.txt')
             with open(txt_filename, "w") as f:
                 f.write(f"Date and Time: {current_time}\n")
-                f.write(f"Data used: {filename}\n")
+                f.write(f"Data used: {subfolder_name}\n")
                 f.write(f"Data used: {data_type}\n")
-                if clustering == 'labels':
-                    f.write(f"Data clustering used: {clustering}\n")
-                    f.write(f"Number of clusters: {n_clusters}\n")
-                elif clustering == 'distance':
-                    f.write(f"Data clustering used: {clustering}\n")
-                    f.write(f"Number of clusters: {n_clusters}\n")
-                else:
-                    f.write(f"Data clustering used: None \n")
+                # if clustering == 'labels':
+                #     f.write(f"Data clustering used: {clustering}\n")
+                #     f.write(f"Number of clusters: {n_clusters}\n")
+                # elif clustering == 'distance':
+                #     f.write(f"Data clustering used: {clustering}\n")
+                #     f.write(f"Number of clusters: {n_clusters}\n")
+                # else:
+                #     f.write(f"Data clustering used: None \n")
                 f.write(f"Random Seed: {random_seed}\n")
-                f.write(f"Navigation Status Entries: {navigation_status_entry}\n")
                 # f.write(f"Train Percentage: {train_split / total_files * 100:.2f}%\n")
                 # f.write(f"Test Percentage: {(test_split - train_split) / total_files * 100:.2f}%\n")
                 # f.write(f"Validation Percentage: {(total_files - test_split) / total_files * 100:.2f}%\n")
