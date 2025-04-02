@@ -224,7 +224,7 @@ match learning_type:
                                  max_iter=60,  
                                  warm_start= True,  # Keeps the previous model state to continue from last fit
                                  random_state=random_seed)
-
+        print(train_nn.get_params())
         # Initialize best validation accuracy and best model
         best_val_accuracy = 0.0
         best_model = None
