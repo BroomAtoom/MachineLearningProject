@@ -28,8 +28,8 @@ print("")
 #----------------------- INITIAL ---------------------------------------------
 
 subfolder_name = "AIS_2020_01_04_fullycleaned_top_0.5_random_seed=621" 
-cluster = 2   # Choose cluster [1,2,3,4] or None for all clusters
-learning_type = 'none'
+cluster = None   # Choose cluster [1,2,3,4] or None for all clusters
+learning_type = 'sklearn'
 data_type = 'CSV'
 
 # Create the 'new_models' folder if it doesn't exist
@@ -86,8 +86,6 @@ for matrix_file in matrix_files:
     globals()[variable_name] = matrix
 
 print("Matrices loaded!")
-
-
 
 # Load the models
 print("Loading models...")
@@ -214,10 +212,10 @@ match learning_type:
         print("")
 
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(4,4),
+        train_nn = MLPClassifier(hidden_layer_sizes=(4,8,20,20,8,4),
                                  activation = "relu",
                                  solver='adam',
-                                 max_iter=10,  
+                                 max_iter=40,  
                                  warm_start= True,  # Keeps the previous model state to continue from last fit
                                  random_state=random_seed)
 
@@ -229,7 +227,7 @@ match learning_type:
         test_accuracies = []  # To store test accuracies for each epoch
 
         # Maximum number of epochs
-        max_epochs = 5
+        max_epochs = 100
         for epoch in range(max_epochs):
             start_time = time.time()  # Record the start time for the epoch
             print(f"\nEpoch {epoch+1}/{max_epochs}")
