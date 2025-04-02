@@ -1,0 +1,16 @@
+Date and Time: 2025-04-02 11:15:45
+Data used: AIS_2020_01_04_fullycleaned_top_0.5_random_seed=621
+Data used: CSV
+Random Seed: 621
+
+MLPClassifier Parameters:
+Hidden Layer Sizes: (4, 8, 8, 4)
+Activation: 'relu'
+Solver: 'adam'
+Max Iter: 20
+Warm Start: True
+Random State: 621
+
+Max Epochs: 20
+Model Accuracy: 89.29%
+Total Time Taken: 0.08 minutes
