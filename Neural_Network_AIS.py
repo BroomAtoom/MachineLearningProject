@@ -63,7 +63,7 @@ for matrix_file in matrix_files:
     matrix_path = os.path.join(full_path, matrix_file)
     
     # Load the matrix
-    matrix = np.load(matrix_path)
+    matrix = np.load(matrix_path, allow_pickle=True)
     
     # Create a variable name based on the file name (remove ".npy")
     variable_name = matrix_file.split(".")[0]
