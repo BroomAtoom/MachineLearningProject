@@ -28,8 +28,8 @@ print("")
 #----------------------- INITIAL ---------------------------------------------
 
 subfolder_name = "AIS_2020_01_04_fullycleaned_top_0.5_random_seed=621" 
-cluster = None   # Choose cluster [1,2,3,4] or None for all clusters
-learning_type = 'sklearn'
+cluster = 2   # Choose cluster [1,2,3,4] or None for all clusters
+learning_type = 'none'
 data_type = 'CSV'
 
 # Create the 'new_models' folder if it doesn't exist
@@ -120,14 +120,87 @@ else:
 #--------------------- EXTRACT DATA FOR ONE CLUSTER ---------------------------    
     
 if cluster == None:
-    # Example of matrix manipulations (modify if necessary)
+
     x_train = np.delete(train_matrix, 3, axis=1)
     x_test = np.delete(test_matrix, 3, axis=1)
     x_val = np.delete(val_matrix, 3, axis=1)
     
     y_train = train_matrix[:, 3]
     y_test = test_matrix[:, 3]
-    y_val = val_matrix[:, 3]    
+    y_val = val_matrix[:, 3]   
+    
+elif cluster == 0:
+    
+    train_matrix_filtered = train_matrix[train_matrix[:, -1] == 0]
+    test_matrix_filtered = train_matrix[train_matrix[:, -1] == 0]
+    val_matrix_filtered = train_matrix[train_matrix[:, -1] == 0]
+    
+    x_train = np.delete(train_matrix_filtered, 3, axis=1)
+    x_test = np.delete(test_matrix_filtered, 3, axis=1)
+    x_val = np.delete(val_matrix_filtered, 3, axis=1)
+    
+    y_train = train_matrix_filtered[:, 3]
+    y_test = test_matrix_filtered[:, 3]
+    y_val = val_matrix_filtered[:, 3] 
+    
+elif cluster == 1:
+    
+    train_matrix_filtered = train_matrix[train_matrix[:, -1] == 1]
+    test_matrix_filtered = train_matrix[train_matrix[:, -1] == 1]
+    val_matrix_filtered = train_matrix[train_matrix[:, -1] == 1]
+    
+    x_train = np.delete(train_matrix_filtered, 3, axis=1)
+    x_test = np.delete(test_matrix_filtered, 3, axis=1)
+    x_val = np.delete(val_matrix_filtered, 3, axis=1)
+    
+    y_train = train_matrix_filtered[:, 3]
+    y_test = test_matrix_filtered[:, 3]
+    y_val = val_matrix_filtered[:, 3]   
+    
+elif cluster == 2:
+    
+    train_matrix_filtered = train_matrix[train_matrix[:, -1] == 2]
+    test_matrix_filtered = train_matrix[train_matrix[:, -1] == 2]
+    val_matrix_filtered = train_matrix[train_matrix[:, -1] == 2]
+    
+    x_train = np.delete(train_matrix_filtered, 3, axis=1)
+    x_test = np.delete(test_matrix_filtered, 3, axis=1)
+    x_val = np.delete(val_matrix_filtered, 3, axis=1)
+    
+    y_train = train_matrix_filtered[:, 3]
+    y_test = test_matrix_filtered[:, 3]
+    y_val = val_matrix_filtered[:, 3]  
+    
+elif cluster == 3:
+    
+    train_matrix_filtered = train_matrix[train_matrix[:, -1] == 3]
+    test_matrix_filtered = train_matrix[train_matrix[:, -1] == 3]
+    val_matrix_filtered = train_matrix[train_matrix[:, -1] == 3]
+    
+    x_train = np.delete(train_matrix_filtered, 3, axis=1)
+    x_test = np.delete(test_matrix_filtered, 3, axis=1)
+    x_val = np.delete(val_matrix_filtered, 3, axis=1)
+    
+    y_train = train_matrix_filtered[:, 3]
+    y_test = test_matrix_filtered[:, 3]
+    y_val = val_matrix_filtered[:, 3] 
+
+elif cluster == 4:
+    
+    train_matrix_filtered = train_matrix[train_matrix[:, -1] == 4]
+    test_matrix_filtered = train_matrix[train_matrix[:, -1] == 4]
+    val_matrix_filtered = train_matrix[train_matrix[:, -1] == 4]
+    
+    x_train = np.delete(train_matrix_filtered, 3, axis=1)
+    x_test = np.delete(test_matrix_filtered, 3, axis=1)
+    x_val = np.delete(val_matrix_filtered, 3, axis=1)
+    
+    y_train = train_matrix_filtered[:, 3]
+    y_test = test_matrix_filtered[:, 3]
+    y_val = val_matrix_filtered[:, 3] 
+    
+else:
+    print("Not a valid cluster number chosen")
 
 
 #------------------ MACHINE LEARNING ------------------------------------------
