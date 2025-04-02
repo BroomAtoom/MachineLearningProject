@@ -27,10 +27,19 @@ print("")
 
 #----------------------- INITIAL ---------------------------------------------
 
-subfolder_name = "AIS_2020_01_09_fullycleaned_top_0.5_random_seed=7777" 
+subfolder_name = "AIS_2020_01_09_fullycleaned_random_seed=7777" 
 cluster = None   # Choose cluster [0,1,2,3,4] or None for all clusters
 learning_type = 'sklearn'
 data_type = 'CSV'
+
+if cluster == None:
+    print("Not filtered on cluster")
+    print("All data used")
+    print("")
+
+else:
+    print("Using only cluster", cluster)
+    print("")
 
 # Create the 'new_models' folder if it doesn't exist
 model_dir = 'new_models'
@@ -207,12 +216,9 @@ match learning_type:
     case 'sklearn':
         print('Sklearn is being used...')
         print("")
-        print("Apply mapping...") 
-        print("Mapping finished!")
-        print("")
 
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(4,8,20,40,80,40,20,8,4),
+        train_nn = MLPClassifier(hidden_layer_sizes=(4,8,8,4),
                                  activation = "relu",
                                  solver='adam',
                                  max_iter=60,  
@@ -227,7 +233,7 @@ match learning_type:
         test_accuracies = []  # To store test accuracies for each epoch
 
         # Maximum number of epochs
-        max_epochs = 100
+        max_epochs = 20
         for epoch in range(max_epochs):
             start_time = time.time()  # Record the start time for the epoch
             print(f"\nEpoch {epoch+1}/{max_epochs}")
