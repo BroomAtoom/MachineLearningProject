@@ -27,7 +27,7 @@ print("")
 
 #----------------------- INITIAL ---------------------------------------------
 
-subfolder_name = "AIS_2020_01_04_fullycleaned_top_0.5_random_seed=621" 
+subfolder_name = "AIS_2020_01_04_fullycleaned_random_seed=621" 
 learning_type = 'sklearn'
 data_type = 'CSV'
 
