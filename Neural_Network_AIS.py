@@ -28,7 +28,7 @@ print("")
 #----------------------- INITIAL ---------------------------------------------
 
 subfolder_name = "AIS_2020_01_04_fullycleaned_top_0.5_random_seed=621" 
-cluster = None
+cluster = None   # Choose cluster [1,2,3,4] or None for all clusters
 learning_type = 'sklearn'
 data_type = 'CSV'
 
@@ -47,9 +47,22 @@ def memory_usage():
     memory_info = process.memory_info()
     return memory_info.rss / 1024 / 1024  # Convert bytes to MB
 
+train_matrix = []
+test_matrix = []
+val_matrix = []
+
+x_train = []    
+x_test = [] 
+x_val = [] 
+
+y_train = []
+y_test = []
+y_val = []
+
 #------------------------- LOADING DATA ---------------------------------------
 
 print("Loading Matrices...")
+
 # Define the parent folder and subfolder
 parent_folder = "matrices"
  # Change dynamically if needed
@@ -74,14 +87,7 @@ for matrix_file in matrix_files:
 
 print("Matrices loaded!")
 
-# Example of matrix manipulations (modify if necessary)
-x_train = np.delete(train_matrix, 3, axis=1)
-x_test = np.delete(test_matrix, 3, axis=1)
-x_val = np.delete(val_matrix, 3, axis=1)
 
-y_train = train_matrix[:, 3]
-y_test = test_matrix[:, 3]
-y_val = val_matrix[:, 3]
 
 # Load the models
 print("Loading models...")
@@ -108,15 +114,21 @@ if match:
     print(f"Random Seed Value: {random_seed}")
 else:
     print("Random seed not found")
-    
+
+
     
 #--------------------- EXTRACT DATA FOR ONE CLUSTER ---------------------------    
     
+if cluster == None:
+    # Example of matrix manipulations (modify if necessary)
+    x_train = np.delete(train_matrix, 3, axis=1)
+    x_test = np.delete(test_matrix, 3, axis=1)
+    x_val = np.delete(val_matrix, 3, axis=1)
     
-    
-    
-    
-    
+    y_train = train_matrix[:, 3]
+    y_test = test_matrix[:, 3]
+    y_val = val_matrix[:, 3]    
+
 
 #------------------ MACHINE LEARNING ------------------------------------------
 
@@ -210,7 +222,7 @@ match learning_type:
             total_training_time = (end_training_time - start_training_time) / 60  # Convert to minutes
             current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Format: YYYY-MM-DD HH:MM:SS
             # Create the text file with model details
-            txt_filename = os.path.join(model_dir, f'{data_type}_AIS_first_model_accuracy_{accuracy_test_str}%.txt')
+            txt_filename = os.path.join(model_dir, f'{data_type}_AIS_model_accuracy_{accuracy_test_str}_cluster_({cluster})%.txt')
             with open(txt_filename, "w") as f:
                 f.write(f"Date and Time: {current_time}\n")
                 f.write(f"Data used: {subfolder_name}\n")
