@@ -46,7 +46,7 @@ print("Modules imported!")
 #------------------ INPUT PARAMETERS ------------------------------------------
 
 learning_type = 'none' # Keep this on 'none' --> NN is done in another file
-random_seed = 621
+random_seed = 7777
 
 # Wich data to train? 'JSON', 'CSV', or 'Both'
 data_type = 'CSV'
