@@ -27,8 +27,8 @@ print("")
 
 #----------------------- INITIAL ---------------------------------------------
 
-subfolder_name = "AIS_2020_01_04_fullycleaned_top_0.5_random_seed=621" 
-cluster = 4   # Choose cluster [0,1,2,3,4] or None for all clusters
+subfolder_name = "AIS_2020_01_09_fullycleaned_top_0.5_random_seed=7777" 
+cluster = None   # Choose cluster [0,1,2,3,4] or None for all clusters
 learning_type = 'sklearn'
 data_type = 'CSV'
 
