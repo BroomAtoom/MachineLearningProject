@@ -28,7 +28,7 @@ print("")
 #----------------------- INITIAL ---------------------------------------------
 
 subfolder_name = "AIS_2020_01_04_fullycleaned_top_0.5_random_seed=621" 
-cluster = None   # Choose cluster [1,2,3,4] or None for all clusters
+cluster = 5   # Choose cluster [0,1,2,3,4] or None for all clusters
 learning_type = 'sklearn'
 data_type = 'CSV'
 
@@ -212,7 +212,7 @@ match learning_type:
         print("")
 
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(4,8,20,20,8,4),
+        train_nn = MLPClassifier(hidden_layer_sizes=(4,8,20,40,20,8,4),
                                  activation = "relu",
                                  solver='adam',
                                  max_iter=40,  
