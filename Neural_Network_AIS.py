@@ -27,7 +27,8 @@ print("")
 
 #----------------------- INITIAL ---------------------------------------------
 
-subfolder_name = "AIS_2020_01_04_fullycleaned_random_seed=621" 
+subfolder_name = "AIS_2020_01_04_fullycleaned_top_0.5_random_seed=621" 
+cluster = None
 learning_type = 'sklearn'
 data_type = 'CSV'
 
@@ -107,6 +108,15 @@ if match:
     print(f"Random Seed Value: {random_seed}")
 else:
     print("Random seed not found")
+    
+    
+#--------------------- EXTRACT DATA FOR ONE CLUSTER ---------------------------    
+    
+    
+    
+    
+    
+    
 
 #------------------ MACHINE LEARNING ------------------------------------------
 
@@ -119,10 +129,10 @@ match learning_type:
         print("")
 
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(4,8,8,4),
+        train_nn = MLPClassifier(hidden_layer_sizes=(4,4),
                                  activation = "relu",
                                  solver='adam',
-                                 max_iter=20,  
+                                 max_iter=10,  
                                  warm_start= True,  # Keeps the previous model state to continue from last fit
                                  random_state=random_seed)
 
@@ -134,7 +144,7 @@ match learning_type:
         test_accuracies = []  # To store test accuracies for each epoch
 
         # Maximum number of epochs
-        max_epochs = 20
+        max_epochs = 5
         for epoch in range(max_epochs):
             start_time = time.time()  # Record the start time for the epoch
             print(f"\nEpoch {epoch+1}/{max_epochs}")
@@ -205,6 +215,7 @@ match learning_type:
                 f.write(f"Date and Time: {current_time}\n")
                 f.write(f"Data used: {subfolder_name}\n")
                 f.write(f"Data used: {data_type}\n")
+                f.write(f"Cluster used: {cluster}\n")
                 # if clustering == 'labels':
                 #     f.write(f"Data clustering used: {clustering}\n")
                 #     f.write(f"Number of clusters: {n_clusters}\n")
