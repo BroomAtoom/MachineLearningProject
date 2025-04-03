@@ -186,7 +186,7 @@ nav_status_counts = df_AIS.groupby(['Cluster', 'Nav status']).size().reset_index
 fig, axes = plt.subplots(1, 2, figsize=(18, 6))
 
 # Normal Bar Plot (First plot)
-sns.barplot(x='Nav status', y='Count', hue='Cluster', data=nav_status_counts, ax=axes[0], ci=None)
+sns.barplot(x='Nav status', y='Count', hue='Cluster', data=nav_status_counts, ax=axes[0], errorbar=None)
 axes[0].set_title('Nav Status Count per Cluster (Normal Scale)')
 axes[0].set_xlabel('Nav Status')
 axes[0].set_ylabel('Count')
@@ -194,7 +194,7 @@ axes[0].legend(title='Cluster', loc='upper right')
 axes[0].grid(True)  # Add grid to the first plot
 
 # Logarithmic Bar Plot (Second plot)
-sns.barplot(x='Nav status', y='Count', hue='Cluster', data=nav_status_counts, ax=axes[1], ci=None)
+sns.barplot(x='Nav status', y='Count', hue='Cluster', data=nav_status_counts, ax=axes[1], errorbar=None)
 axes[1].set_title('Nav Status Count per Cluster (Logarithmic Scale)')
 axes[1].set_xlabel('Nav Status')
 axes[1].set_ylabel('Count (Log Scale)')
@@ -204,7 +204,8 @@ axes[1].grid(True)  # Add grid to the second plot
 
 # Rotate x-axis labels for both plots to avoid overlap
 for ax in axes:
-    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right', fontsize=10)
+    ax.set_xticks(range(len(navigation_status_mapping)))  # Set the tick positions manually
+    ax.set_xticklabels(navigation_status_mapping.keys(), rotation=45, ha='right', fontsize=10)
 
 # Adjust layout for better spacing
 plt.tight_layout()
