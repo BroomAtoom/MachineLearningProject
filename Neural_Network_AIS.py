@@ -31,7 +31,7 @@ print("")
 #----------------------- INITIAL ---------------------------------------------
 
 subfolder_name = "AIS_2020_01_09_fullycleaned_top_0.5_random_seed=7777" 
-cluster = 0   # Choose cluster [0,1,2,3,4] or None for all clusters
+cluster = None   # Choose cluster [0,1,2,3,4] or None for all clusters
 learning_type = 'none'
 data_type = 'CSV'
 
@@ -135,6 +135,10 @@ else:
 if cluster is None:
     x_train, x_test, x_val = np.delete(train_matrix, 3, axis=1), np.delete(test_matrix, 3, axis=1), np.delete(val_matrix, 3, axis=1)
     y_train, y_test, y_val = train_matrix[:, 3], test_matrix[:, 3], val_matrix[:, 3]
+    
+    full_matrix = np.vstack([train_matrix, test_matrix, val_matrix])
+    column_names = ['Longitude', 'Latitude', 'Speed', 'Nav status', 'Cluster']
+    df_AIS = pd.DataFrame(full_matrix, columns=column_names)
 
 elif cluster in [0, 1, 2, 3, 4]:
     train_matrix_filtered = train_matrix[train_matrix[:, -1] == cluster]
@@ -155,9 +159,9 @@ elif cluster in [0, 1, 2, 3, 4]:
 
 else:
     print("Not a valid cluster number chosen")
-    
-    
-#------------------- CLUSTER VISUALS ------------------------------------------
+
+
+#------------------- WORLD MAP ------------------------------------------
 
 if cluster is not None:
     print("")
