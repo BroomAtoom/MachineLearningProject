@@ -176,6 +176,8 @@ else:
 
 #------------------- MAKE CLUSTER VISUAL --------------------------------------
 
+# Replace Nav status integers with the corresponding labels
+df_AIS['Nav status'] = df_AIS['Nav status'].map({v: k for k, v in navigation_status_mapping.items()})
 
 # Group by 'Cluster' and 'Nav status', and count the occurrences
 nav_status_counts = df_AIS.groupby(['Cluster', 'Nav status']).size().reset_index(name='Count')
@@ -189,6 +191,7 @@ axes[0].set_title('Nav Status Count per Cluster (Normal Scale)')
 axes[0].set_xlabel('Nav Status')
 axes[0].set_ylabel('Count')
 axes[0].legend(title='Cluster', loc='upper right')
+axes[0].grid(True)  # Add grid to the first plot
 
 # Logarithmic Bar Plot (Second plot)
 sns.barplot(x='Nav status', y='Count', hue='Cluster', data=nav_status_counts, ax=axes[1], ci=None)
@@ -197,11 +200,15 @@ axes[1].set_xlabel('Nav Status')
 axes[1].set_ylabel('Count (Log Scale)')
 axes[1].set_yscale('log')
 axes[1].legend(title='Cluster', loc='upper right')
+axes[1].grid(True)  # Add grid to the second plot
 
-# Show the plot
+# Rotate x-axis labels for both plots to avoid overlap
+for ax in axes:
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right', fontsize=10)
+
+# Adjust layout for better spacing
 plt.tight_layout()
 plt.show()
-
 #------------------- WORLD MAP ------------------------------------------
 
 if cluster is not None:
