@@ -227,6 +227,60 @@ if not cluster == None:
     column_names = ['Longitude', 'Latitude', 'Speed', 'Nav status', 'Cluster']
     df_AIS = pd.DataFrame(full_matrix, columns=column_names)
     
+    print("Plotting Longitude and Latitude on World Map...")
+    
+    # Extract longitude and latitude from the dataframe
+    lats = df_AIS['Latitude']
+    lons = df_AIS['Longitude']
+
+    # Create a GeoDataFrame from the longitude and latitude
+    gdf = gpd.GeoDataFrame(df_AIS, 
+                           geometry=gpd.points_from_xy(lons, lats), 
+                           crs="EPSG:4326")  # EPSG:4326 is the standard for longitude/latitude
+    
+    # Get the current directory where the script is located
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # Define the path to the shapefile within the '110m_cultural' folder
+    shapefile_path = os.path.join(script_dir, "110m_cultural", "ne_110m_admin_0_countries.shp")
+    
+    # Create a base map (a simple world map)
+    world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+    
+    # Plot the world map
+    ax = world.plot(figsize=(10, 6), color='lightgray')
+
+    # Plot the data points (longitude and latitude)
+    gdf.plot(ax=ax, color='red', markersize=1, alpha=0.5, label="AIS Data Points")
+    
+    # Add basemap for better context (using Contextily)
+    ctx.add_basemap(ax, crs=gdf.crs.to_string(), source=ctx.providers.CartoDB.Positron)
+
+    # Set labels and title
+    plt.title(f"Longitude and Latitude Plot for Cluster {cluster}")
+    plt.xlabel("Longitude")
+    plt.ylabel("Latitude")
+    plt.legend()
+
+    # Show the plot
+    plt.show()
+    # Plot the world map
+    ax = world.plot(figsize=(10, 6), color='lightgray')
+    
+    # Assuming you have a GeoDataFrame 'gdf' for your AIS data
+    gdf.plot(ax=ax, color='red', markersize=1, alpha=0.5, label="AIS Data Points")
+    
+    # Add basemap for better context (using Contextily)
+    ctx.add_basemap(ax, crs=gdf.crs.to_string(), source=ctx.providers.CartoDB.Positron)
+    
+    # Set labels and title
+    plt.title(f"Longitude and Latitude Plot for Cluster {cluster}")
+    plt.xlabel("Longitude")
+    plt.ylabel("Latitude")
+    plt.legend()
+    
+    # Show the plot
+    plt.show()
 
 
 #------------------ MACHINE LEARNING ------------------------------------------
