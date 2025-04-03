@@ -17,6 +17,7 @@ import joblib
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
 
 from datetime import datetime
 from sklearn.neural_network import MLPClassifier
