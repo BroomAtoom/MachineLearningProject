@@ -16,6 +16,7 @@ import psutil
 import joblib
 import numpy as np
 import pandas as pd
+import seaborn as sns
 import matplotlib.pyplot as plt
 import geopandas as gpd
 import contextily as ctx
@@ -73,6 +74,19 @@ x_val = []
 y_train = []
 y_test = []
 y_val = []
+
+
+navigation_status_mapping = {
+    'Under-way-using-engine': 0,
+    'Anchored': 1,
+    'Not under command': 2,
+    'Has restricted maneuverability': 3,
+    'Ship draught is limiting its movement': 4,
+    'Moored': 5,
+    'Aground': 6,
+    'Fishing': 7,
+    'Under-way-sailing': 8
+}
 
 #------------------------- LOADING DATA ---------------------------------------
 
@@ -160,6 +174,33 @@ elif cluster in [0, 1, 2, 3, 4]:
 else:
     print("Not a valid cluster number chosen")
 
+#------------------- MAKE CLUSTER VISUAL --------------------------------------
+
+
+# Group by 'Cluster' and 'Nav status', and count the occurrences
+nav_status_counts = df_AIS.groupby(['Cluster', 'Nav status']).size().reset_index(name='Count')
+
+# Create a figure with 2 subplots (1 row, 2 columns)
+fig, axes = plt.subplots(1, 2, figsize=(18, 6))
+
+# Normal Bar Plot (First plot)
+sns.barplot(x='Nav status', y='Count', hue='Cluster', data=nav_status_counts, ax=axes[0], ci=None)
+axes[0].set_title('Nav Status Count per Cluster (Normal Scale)')
+axes[0].set_xlabel('Nav Status')
+axes[0].set_ylabel('Count')
+axes[0].legend(title='Cluster', loc='upper right')
+
+# Logarithmic Bar Plot (Second plot)
+sns.barplot(x='Nav status', y='Count', hue='Cluster', data=nav_status_counts, ax=axes[1], ci=None)
+axes[1].set_title('Nav Status Count per Cluster (Logarithmic Scale)')
+axes[1].set_xlabel('Nav Status')
+axes[1].set_ylabel('Count (Log Scale)')
+axes[1].set_yscale('log')
+axes[1].legend(title='Cluster', loc='upper right')
+
+# Show the plot
+plt.tight_layout()
+plt.show()
 
 #------------------- WORLD MAP ------------------------------------------
 
@@ -177,18 +218,6 @@ if cluster is not None:
     gdf = gpd.GeoDataFrame(df_AIS, 
                            geometry=gpd.points_from_xy(lons, lats), 
                            crs="EPSG:4326")  # EPSG:4326 is the standard for longitude/latitude
-    
-    navigation_status_mapping = {
-        'Under-way-using-engine': 0,
-        'Anchored': 1,
-        'Not under command': 2,
-        'Has restricted maneuverability': 3,
-        'Ship draught is limiting its movement': 4,
-        'Moored': 5,
-        'Aground': 6,
-        'Fishing': 7,
-        'Under-way-sailing': 8
-    }
 
     # Define colors for each navigation status
     nav_status_colors = {
