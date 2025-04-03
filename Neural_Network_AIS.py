@@ -32,8 +32,9 @@ print("")
 #----------------------- INITIAL ---------------------------------------------
 
 subfolder_name = "AIS_2020_01_09_fullycleaned_top_0.5_random_seed=7777" 
-cluster = None   # Choose cluster [0,1,2,3,4] or None for all clusters
-learning_type = 'none'
+cluster = 0   # Choose cluster [0,1,2,3,4] or None for all clusters
+learning_type = 'sklearn'
+plots = False
 data_type = 'CSV'
 
 if cluster == None:
@@ -174,115 +175,118 @@ elif cluster in [0, 1, 2, 3, 4]:
 else:
     print("Not a valid cluster number chosen")
 
-#------------------- MAKE CLUSTER VISUAL --------------------------------------
 
-# Replace Nav status integers with the corresponding labels
-df_AIS['Nav status'] = df_AIS['Nav status'].map({v: k for k, v in navigation_status_mapping.items()})
+if plots == True:
 
-# Group by 'Cluster' and 'Nav status', and count the occurrences
-nav_status_counts = df_AIS.groupby(['Cluster', 'Nav status']).size().reset_index(name='Count')
-
-# Create a figure with 2 subplots (1 row, 2 columns)
-fig, axes = plt.subplots(1, 2, figsize=(18, 6))
-
-# Normal Bar Plot (First plot)
-sns.barplot(x='Nav status', y='Count', hue='Cluster', data=nav_status_counts, ax=axes[0], errorbar=None)
-axes[0].set_title('Nav Status Count per Cluster (Normal Scale)')
-axes[0].set_xlabel('Nav Status')
-axes[0].set_ylabel('Count')
-axes[0].legend(title='Cluster', loc='upper right')
-axes[0].grid(True)  # Add grid to the first plot
-
-# Logarithmic Bar Plot (Second plot)
-sns.barplot(x='Nav status', y='Count', hue='Cluster', data=nav_status_counts, ax=axes[1], errorbar=None)
-axes[1].set_title('Nav Status Count per Cluster (Logarithmic Scale)')
-axes[1].set_xlabel('Nav Status')
-axes[1].set_ylabel('Count (Log Scale)')
-axes[1].set_yscale('log')
-axes[1].legend(title='Cluster', loc='upper right')
-axes[1].grid(True)  # Add grid to the second plot
-
-# Rotate x-axis labels for both plots to avoid overlap
-for ax in axes:
-    ax.set_xticks(range(len(navigation_status_mapping)))  # Set the tick positions manually
-    ax.set_xticklabels(navigation_status_mapping.keys(), rotation=45, ha='right', fontsize=10)
-
-# Adjust layout for better spacing
-plt.tight_layout()
-plt.show()
-#------------------- WORLD MAP ------------------------------------------
-
-if cluster is not None:
-    print("")
-    print("Making cluster visuals for cluster:", cluster)
+    #------------------- MAKE CLUSTER VISUAL --------------------------------------
     
-    print("Plotting Longitude and Latitude on World Map...")
+    # Replace Nav status integers with the corresponding labels
+    df_AIS['Nav status'] = df_AIS['Nav status'].map({v: k for k, v in navigation_status_mapping.items()})
     
-    # Extract longitude and latitude from the dataframe
-    lats = df_AIS['Latitude']
-    lons = df_AIS['Longitude']
+    # Group by 'Cluster' and 'Nav status', and count the occurrences
+    nav_status_counts = df_AIS.groupby(['Cluster', 'Nav status']).size().reset_index(name='Count')
     
-    # Create a GeoDataFrame from the longitude and latitude
-    gdf = gpd.GeoDataFrame(df_AIS, 
-                           geometry=gpd.points_from_xy(lons, lats), 
-                           crs="EPSG:4326")  # EPSG:4326 is the standard for longitude/latitude
-
-    # Define colors for each navigation status
-    nav_status_colors = {
-        0: 'blue',
-        1: 'green',
-        2: 'red',
-        3: 'purple',
-        4: 'orange',
-        5: 'yellow',
-        6: 'cyan',
-        7: 'brown',
-        8: 'pink'
-    }
+    # Create a figure with 2 subplots (1 row, 2 columns)
+    fig, axes = plt.subplots(1, 2, figsize=(18, 6))
     
-    # Assign colors to each point in your gdf based on its Nav status
-    gdf['color'] = gdf['Nav status'].map(nav_status_colors)
+    # Normal Bar Plot (First plot)
+    sns.barplot(x='Nav status', y='Count', hue='Cluster', data=nav_status_counts, ax=axes[0], errorbar=None)
+    axes[0].set_title('Nav Status Count per Cluster (Normal Scale)')
+    axes[0].set_xlabel('Nav Status')
+    axes[0].set_ylabel('Count')
+    axes[0].legend(title='Cluster', loc='upper right')
+    axes[0].grid(True)  # Add grid to the first plot
     
-    # Get the current directory where the script is located
-    script_dir = os.path.dirname(os.path.abspath(__file__))
+    # Logarithmic Bar Plot (Second plot)
+    sns.barplot(x='Nav status', y='Count', hue='Cluster', data=nav_status_counts, ax=axes[1], errorbar=None)
+    axes[1].set_title('Nav Status Count per Cluster (Logarithmic Scale)')
+    axes[1].set_xlabel('Nav Status')
+    axes[1].set_ylabel('Count (Log Scale)')
+    axes[1].set_yscale('log')
+    axes[1].legend(title='Cluster', loc='upper right')
+    axes[1].grid(True)  # Add grid to the second plot
     
-    # Define the path to the shapefile within the '110m_cultural' folder
-    shapefile_path = os.path.join(script_dir, "110m_cultural", "ne_110m_admin_0_countries.shp")
+    # Rotate x-axis labels for both plots to avoid overlap
+    for ax in axes:
+        ax.set_xticks(range(len(navigation_status_mapping)))  # Set the tick positions manually
+        ax.set_xticklabels(navigation_status_mapping.keys(), rotation=45, ha='right', fontsize=10)
     
-    # Load the shapefile
-    world = gpd.read_file(shapefile_path)
-    
-    # Filter for the United States (including Hawaii and Puerto Rico)
-    us_and_territories = world[world['NAME'].isin(['United States', 'Puerto Rico'])]
-    
-    # Plot the filtered map (United States and Territories)
-    ax = us_and_territories.plot(figsize=(10, 6), color='lightgray')
-    
-    # Plot the AIS data points, colored by the Nav status
-    gdf.plot(ax=ax, color=gdf['color'], markersize=5, alpha=0.6, label="AIS Data Points")
-    
-    # Add basemap for better context (using Contextily)
-    ctx.add_basemap(ax, crs=gdf.crs.to_string(), source=ctx.providers.CartoDB.Positron)
-    
-    # Create custom legend with navigation status labels
-    handles = []
-    for status, color in nav_status_colors.items():
-        label = list(navigation_status_mapping.keys())[list(navigation_status_mapping.values()).index(status)]
-        handle = plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, markersize=10, label=label)
-        handles.append(handle)
-    
-    # Set labels and title
-    plt.title(f"Longitude and Latitude Plot for Cluster {cluster} (United States and Territories)")
-    plt.xlabel("Longitude")
-    plt.ylabel("Latitude")
-    
-    # Add legend to the plot
-    plt.legend(handles=handles, title="Navigation Status")
-    
-    # Show the plot
+    # Adjust layout for better spacing
+    plt.tight_layout()
     plt.show()
-
-
+    #------------------- WORLD MAP ------------------------------------------
+    
+    if cluster is not None:
+        print("")
+        print("Making cluster visuals for cluster:", cluster)
+        
+        print("Plotting Longitude and Latitude on World Map...")
+        
+        # Extract longitude and latitude from the dataframe
+        lats = df_AIS['Latitude']
+        lons = df_AIS['Longitude']
+        
+        # Create a GeoDataFrame from the longitude and latitude
+        gdf = gpd.GeoDataFrame(df_AIS, 
+                               geometry=gpd.points_from_xy(lons, lats), 
+                               crs="EPSG:4326")  # EPSG:4326 is the standard for longitude/latitude
+    
+        # Define colors for each navigation status
+        nav_status_colors = {
+            0: 'blue',
+            1: 'green',
+            2: 'red',
+            3: 'purple',
+            4: 'orange',
+            5: 'yellow',
+            6: 'cyan',
+            7: 'brown',
+            8: 'pink'
+        }
+        
+        # Assign colors to each point in your gdf based on its Nav status
+        gdf['color'] = gdf['Nav status'].map(nav_status_colors)
+        
+        # Get the current directory where the script is located
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        
+        # Define the path to the shapefile within the '110m_cultural' folder
+        shapefile_path = os.path.join(script_dir, "110m_cultural", "ne_110m_admin_0_countries.shp")
+        
+        # Load the shapefile
+        world = gpd.read_file(shapefile_path)
+        
+        # Filter for the United States (including Hawaii and Puerto Rico)
+        us_and_territories = world[world['NAME'].isin(['United States', 'Puerto Rico'])]
+        
+        # Plot the filtered map (United States and Territories)
+        ax = us_and_territories.plot(figsize=(10, 6), color='lightgray')
+        
+        # Plot the AIS data points, colored by the Nav status
+        gdf.plot(ax=ax, color=gdf['color'], markersize=5, alpha=0.6, label="AIS Data Points")
+        
+        # Add basemap for better context (using Contextily)
+        ctx.add_basemap(ax, crs=gdf.crs.to_string(), source=ctx.providers.CartoDB.Positron)
+        
+        # Create custom legend with navigation status labels
+        handles = []
+        for status, color in nav_status_colors.items():
+            label = list(navigation_status_mapping.keys())[list(navigation_status_mapping.values()).index(status)]
+            handle = plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, markersize=10, label=label)
+            handles.append(handle)
+        
+        # Set labels and title
+        plt.title(f"Longitude and Latitude Plot for Cluster {cluster} (United States and Territories)")
+        plt.xlabel("Longitude")
+        plt.ylabel("Latitude")
+        
+        # Add legend to the plot
+        plt.legend(handles=handles, title="Navigation Status")
+        
+        # Show the plot
+        plt.show()
+    else:
+        print("No plots")
 
 
 #------------------ MACHINE LEARNING ------------------------------------------
@@ -293,7 +297,7 @@ match learning_type:
         print("")
 
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(4,8,8,4),
+        train_nn = MLPClassifier(hidden_layer_sizes=(4,8,16,32,50,16,8,4),
                                  activation = "relu",
                                  solver='adam',
                                  max_iter=60,  
