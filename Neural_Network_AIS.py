@@ -31,7 +31,7 @@ print("")
 #----------------------- INITIAL ---------------------------------------------
 
 subfolder_name = "AIS_2020_01_09_fullycleaned_top_0.5_random_seed=7777" 
-cluster = 4   # Choose cluster [0,1,2,3,4] or None for all clusters
+cluster = 0   # Choose cluster [0,1,2,3,4] or None for all clusters
 learning_type = 'none'
 data_type = 'CSV'
 
@@ -132,86 +132,27 @@ else:
     
 #--------------------- EXTRACT DATA FOR ONE CLUSTER ---------------------------    
     
-if cluster == None:
+if cluster is None:
+    x_train, x_test, x_val = np.delete(train_matrix, 3, axis=1), np.delete(test_matrix, 3, axis=1), np.delete(val_matrix, 3, axis=1)
+    y_train, y_test, y_val = train_matrix[:, 3], test_matrix[:, 3], val_matrix[:, 3]
 
-    x_train = np.delete(train_matrix, 3, axis=1)
-    x_test = np.delete(test_matrix, 3, axis=1)
-    x_val = np.delete(val_matrix, 3, axis=1)
-    
-    y_train = train_matrix[:, 3]
-    y_test = test_matrix[:, 3]
-    y_val = val_matrix[:, 3]   
-    
-elif cluster == 0:
-    
-    train_matrix_filtered = train_matrix[train_matrix[:, -1] == 0]
-    test_matrix_filtered = train_matrix[train_matrix[:, -1] == 0]
-    val_matrix_filtered = train_matrix[train_matrix[:, -1] == 0]
-    
-    x_train = np.delete(train_matrix_filtered, 3, axis=1)
-    x_test = np.delete(test_matrix_filtered, 3, axis=1)
-    x_val = np.delete(val_matrix_filtered, 3, axis=1)
-    
-    y_train = train_matrix_filtered[:, 3]
-    y_test = test_matrix_filtered[:, 3]
-    y_val = val_matrix_filtered[:, 3] 
-    
-elif cluster == 1:
-    
-    train_matrix_filtered = train_matrix[train_matrix[:, -1] == 1]
-    test_matrix_filtered = train_matrix[train_matrix[:, -1] == 1]
-    val_matrix_filtered = train_matrix[train_matrix[:, -1] == 1]
-    
-    x_train = np.delete(train_matrix_filtered, 3, axis=1)
-    x_test = np.delete(test_matrix_filtered, 3, axis=1)
-    x_val = np.delete(val_matrix_filtered, 3, axis=1)
-    
-    y_train = train_matrix_filtered[:, 3]
-    y_test = test_matrix_filtered[:, 3]
-    y_val = val_matrix_filtered[:, 3]   
-    
-elif cluster == 2:
-    
-    train_matrix_filtered = train_matrix[train_matrix[:, -1] == 2]
-    test_matrix_filtered = train_matrix[train_matrix[:, -1] == 2]
-    val_matrix_filtered = train_matrix[train_matrix[:, -1] == 2]
-    
-    x_train = np.delete(train_matrix_filtered, 3, axis=1)
-    x_test = np.delete(test_matrix_filtered, 3, axis=1)
-    x_val = np.delete(val_matrix_filtered, 3, axis=1)
-    
-    y_train = train_matrix_filtered[:, 3]
-    y_test = test_matrix_filtered[:, 3]
-    y_val = val_matrix_filtered[:, 3]  
-    
-elif cluster == 3:
-    
-    train_matrix_filtered = train_matrix[train_matrix[:, -1] == 3]
-    test_matrix_filtered = train_matrix[train_matrix[:, -1] == 3]
-    val_matrix_filtered = train_matrix[train_matrix[:, -1] == 3]
-    
-    x_train = np.delete(train_matrix_filtered, 3, axis=1)
-    x_test = np.delete(test_matrix_filtered, 3, axis=1)
-    x_val = np.delete(val_matrix_filtered, 3, axis=1)
-    
-    y_train = train_matrix_filtered[:, 3]
-    y_test = test_matrix_filtered[:, 3]
-    y_val = val_matrix_filtered[:, 3] 
+elif cluster in [0, 1, 2, 3, 4]:
+    train_matrix_filtered = train_matrix[train_matrix[:, -1] == cluster]
+    test_matrix_filtered = train_matrix[train_matrix[:, -1] == cluster]
+    val_matrix_filtered = train_matrix[train_matrix[:, -1] == cluster]
 
-elif cluster == 4:
-    
-    train_matrix_filtered = train_matrix[train_matrix[:, -1] == 4]
-    test_matrix_filtered = train_matrix[train_matrix[:, -1] == 4]
-    val_matrix_filtered = train_matrix[train_matrix[:, -1] == 4]
-    
     x_train = np.delete(train_matrix_filtered, 3, axis=1)
     x_test = np.delete(test_matrix_filtered, 3, axis=1)
     x_val = np.delete(val_matrix_filtered, 3, axis=1)
-    
+
     y_train = train_matrix_filtered[:, 3]
     y_test = test_matrix_filtered[:, 3]
-    y_val = val_matrix_filtered[:, 3] 
-    
+    y_val = val_matrix_filtered[:, 3]
+
+    full_matrix = np.vstack([train_matrix_filtered, test_matrix_filtered, val_matrix_filtered])
+    column_names = ['Longitude', 'Latitude', 'Speed', 'Nav status', 'Cluster']
+    df_AIS = pd.DataFrame(full_matrix, columns=column_names)
+
 else:
     print("Not a valid cluster number chosen")
     
@@ -221,12 +162,6 @@ else:
 if cluster is not None:
     print("")
     print("Making cluster visuals for cluster:", cluster)
-    
-    full_matrix = np.vstack([train_matrix_filtered, 
-                             test_matrix_filtered, 
-                             val_matrix_filtered])
-    column_names = ['Longitude', 'Latitude', 'Speed', 'Nav status', 'Cluster']
-    df_AIS = pd.DataFrame(full_matrix, columns=column_names)
     
     print("Plotting Longitude and Latitude on World Map...")
     
@@ -239,6 +174,19 @@ if cluster is not None:
                            geometry=gpd.points_from_xy(lons, lats), 
                            crs="EPSG:4326")  # EPSG:4326 is the standard for longitude/latitude
     
+    navigation_status_mapping = {
+        'Under-way-using-engine': 0,
+        'Anchored': 1,
+        'Not under command': 2,
+        'Has restricted maneuverability': 3,
+        'Ship draught is limiting its movement': 4,
+        'Moored': 5,
+        'Aground': 6,
+        'Fishing': 7,
+        'Under-way-sailing': 8
+    }
+
+    # Define colors for each navigation status
     nav_status_colors = {
         0: 'blue',
         1: 'green',
@@ -275,14 +223,24 @@ if cluster is not None:
     # Add basemap for better context (using Contextily)
     ctx.add_basemap(ax, crs=gdf.crs.to_string(), source=ctx.providers.CartoDB.Positron)
     
+    # Create custom legend with navigation status labels
+    handles = []
+    for status, color in nav_status_colors.items():
+        label = list(navigation_status_mapping.keys())[list(navigation_status_mapping.values()).index(status)]
+        handle = plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, markersize=10, label=label)
+        handles.append(handle)
+    
     # Set labels and title
     plt.title(f"Longitude and Latitude Plot for Cluster {cluster} (United States and Territories)")
     plt.xlabel("Longitude")
     plt.ylabel("Latitude")
-    plt.legend()
+    
+    # Add legend to the plot
+    plt.legend(handles=handles, title="Navigation Status")
     
     # Show the plot
     plt.show()
+
 
 
 
