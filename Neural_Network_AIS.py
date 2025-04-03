@@ -28,8 +28,8 @@ print("")
 #----------------------- INITIAL ---------------------------------------------
 
 subfolder_name = "AIS_2020_01_09_fullycleaned_random_seed=7777" 
-cluster = None   # Choose cluster [0,1,2,3,4] or None for all clusters
-learning_type = 'sklearn'
+cluster = 3   # Choose cluster [0,1,2,3,4] or None for all clusters
+learning_type = 'none'
 data_type = 'CSV'
 
 if cluster == None:
@@ -208,6 +208,29 @@ elif cluster == 4:
     
 else:
     print("Not a valid cluster number chosen")
+    
+    
+#------------------- CLUSTER VISUALS ------------------------------------------
+
+if not cluster == None:
+    print("")
+    print("Making cluster visuals for cluster:", cluster)
+    full_matrix = np.vstack([train_matrix_filtered, 
+                             test_matrix_filtered, 
+                             val_matrix_filtered])
+    column_names = ['Column1', 'Column2', 'Column3']
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #------------------ MACHINE LEARNING ------------------------------------------
