@@ -244,30 +244,13 @@ if not cluster == None:
     # Define the path to the shapefile within the '110m_cultural' folder
     shapefile_path = os.path.join(script_dir, "110m_cultural", "ne_110m_admin_0_countries.shp")
     
-    # Create a base map (a simple world map)
-    world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+    # Load the shapefile
+    world = gpd.read_file(shapefile_path)
     
     # Plot the world map
     ax = world.plot(figsize=(10, 6), color='lightgray')
-
+    
     # Plot the data points (longitude and latitude)
-    gdf.plot(ax=ax, color='red', markersize=1, alpha=0.5, label="AIS Data Points")
-    
-    # Add basemap for better context (using Contextily)
-    ctx.add_basemap(ax, crs=gdf.crs.to_string(), source=ctx.providers.CartoDB.Positron)
-
-    # Set labels and title
-    plt.title(f"Longitude and Latitude Plot for Cluster {cluster}")
-    plt.xlabel("Longitude")
-    plt.ylabel("Latitude")
-    plt.legend()
-
-    # Show the plot
-    plt.show()
-    # Plot the world map
-    ax = world.plot(figsize=(10, 6), color='lightgray')
-    
-    # Assuming you have a GeoDataFrame 'gdf' for your AIS data
     gdf.plot(ax=ax, color='red', markersize=1, alpha=0.5, label="AIS Data Points")
     
     # Add basemap for better context (using Contextily)
