@@ -247,8 +247,11 @@ if not cluster == None:
     # Load the shapefile
     world = gpd.read_file(shapefile_path)
     
+    us = world[world['NAME'] == 'United States']
+    us_and_territories = world[world['NAME'].isin(['United States', 'Puerto Rico'])]
+
     # Plot the world map
-    ax = world.plot(figsize=(10, 6), color='lightgray')
+    ax = us_and_territories.plot(figsize=(10, 6), color='lightgray')
     
     # Plot the data points (longitude and latitude)
     gdf.plot(ax=ax, color='red', markersize=1, alpha=0.5, label="AIS Data Points")
