@@ -17,7 +17,8 @@ import joblib
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import cartopy.crs as ccrs
+import geopandas as gpd
+import contextily as ctx
 
 from datetime import datetime
 from sklearn.neural_network import MLPClassifier
@@ -225,24 +226,7 @@ if not cluster == None:
                              val_matrix_filtered])
     column_names = ['Longitude', 'Latitude', 'Speed', 'Nav status', 'Cluster']
     df_AIS = pd.DataFrame(full_matrix, columns=column_names)
-    plt.figure(1, figsize=(10,10))
-    plt.scatter(df_AIS['Longitude'], df_AIS['Latitude'])
-    plt.grid()
-    plt.xlabel("Longitude")
-    plt.ylabel("Latitude")
     
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 #------------------ MACHINE LEARNING ------------------------------------------
