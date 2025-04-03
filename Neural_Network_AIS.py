@@ -29,7 +29,7 @@ print("")
 #----------------------- INITIAL ---------------------------------------------
 
 subfolder_name = "AIS_2020_01_09_fullycleaned_top_0.5_random_seed=7777" 
-cluster = 3   # Choose cluster [0,1,2,3,4] or None for all clusters
+cluster = 0   # Choose cluster [0,1,2,3,4] or None for all clusters
 learning_type = 'none'
 data_type = 'CSV'
 
@@ -224,8 +224,8 @@ if not cluster == None:
                              val_matrix_filtered])
     column_names = ['Longitude', 'Latitude', 'Speed', 'Nav status', 'Cluster']
     df_AIS = pd.DataFrame(full_matrix, columns=column_names)
-    plt.figure(1)
-    plt.plot(df_AIS['Longitude'], df_AIS['Latitude'])
+    plt.figure(1, figsize=(10,10))
+    plt.scatter(df_AIS['Longitude'], df_AIS['Latitude'])
     plt.grid()
     plt.xlabel("Longitude")
     plt.ylabel("Latitude")
