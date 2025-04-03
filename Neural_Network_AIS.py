@@ -31,7 +31,7 @@ print("")
 #----------------------- INITIAL ---------------------------------------------
 
 subfolder_name = "AIS_2020_01_09_fullycleaned_top_0.5_random_seed=7777" 
-cluster = 0   # Choose cluster [0,1,2,3,4] or None for all clusters
+cluster = 4   # Choose cluster [0,1,2,3,4] or None for all clusters
 learning_type = 'none'
 data_type = 'CSV'
 
@@ -218,9 +218,10 @@ else:
     
 #------------------- CLUSTER VISUALS ------------------------------------------
 
-if not cluster == None:
+if cluster is not None:
     print("")
     print("Making cluster visuals for cluster:", cluster)
+    
     full_matrix = np.vstack([train_matrix_filtered, 
                              test_matrix_filtered, 
                              val_matrix_filtered])
@@ -232,11 +233,26 @@ if not cluster == None:
     # Extract longitude and latitude from the dataframe
     lats = df_AIS['Latitude']
     lons = df_AIS['Longitude']
-
+    
     # Create a GeoDataFrame from the longitude and latitude
     gdf = gpd.GeoDataFrame(df_AIS, 
                            geometry=gpd.points_from_xy(lons, lats), 
                            crs="EPSG:4326")  # EPSG:4326 is the standard for longitude/latitude
+    
+    nav_status_colors = {
+        0: 'blue',
+        1: 'green',
+        2: 'red',
+        3: 'purple',
+        4: 'orange',
+        5: 'yellow',
+        6: 'cyan',
+        7: 'brown',
+        8: 'pink'
+    }
+    
+    # Assign colors to each point in your gdf based on its Nav status
+    gdf['color'] = gdf['Nav status'].map(nav_status_colors)
     
     # Get the current directory where the script is located
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -247,26 +263,27 @@ if not cluster == None:
     # Load the shapefile
     world = gpd.read_file(shapefile_path)
     
-    us = world[world['NAME'] == 'United States']
+    # Filter for the United States (including Hawaii and Puerto Rico)
     us_and_territories = world[world['NAME'].isin(['United States', 'Puerto Rico'])]
-
-    # Plot the world map
+    
+    # Plot the filtered map (United States and Territories)
     ax = us_and_territories.plot(figsize=(10, 6), color='lightgray')
     
-    # Plot the data points (longitude and latitude)
-    gdf.plot(ax=ax, color='red', markersize=1, alpha=0.5, label="AIS Data Points")
+    # Plot the AIS data points, colored by the Nav status
+    gdf.plot(ax=ax, color=gdf['color'], markersize=5, alpha=0.6, label="AIS Data Points")
     
     # Add basemap for better context (using Contextily)
     ctx.add_basemap(ax, crs=gdf.crs.to_string(), source=ctx.providers.CartoDB.Positron)
     
     # Set labels and title
-    plt.title(f"Longitude and Latitude Plot for Cluster {cluster}")
+    plt.title(f"Longitude and Latitude Plot for Cluster {cluster} (United States and Territories)")
     plt.xlabel("Longitude")
     plt.ylabel("Latitude")
     plt.legend()
     
     # Show the plot
     plt.show()
+
 
 
 #------------------ MACHINE LEARNING ------------------------------------------
