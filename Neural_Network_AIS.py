@@ -15,6 +15,7 @@ import warnings
 import psutil
 import joblib
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 
 from datetime import datetime
@@ -27,7 +28,7 @@ print("")
 
 #----------------------- INITIAL ---------------------------------------------
 
-subfolder_name = "AIS_2020_01_09_fullycleaned_random_seed=7777" 
+subfolder_name = "AIS_2020_01_09_fullycleaned_top_0.5_random_seed=7777" 
 cluster = 3   # Choose cluster [0,1,2,3,4] or None for all clusters
 learning_type = 'none'
 data_type = 'CSV'
@@ -40,6 +41,9 @@ if cluster == None:
 else:
     print("Using only cluster", cluster)
     print("")
+
+
+plt.rcParams['agg.path.chunksize'] = 10000
 
 # Create the 'new_models' folder if it doesn't exist
 model_dir = 'new_models'
@@ -218,7 +222,14 @@ if not cluster == None:
     full_matrix = np.vstack([train_matrix_filtered, 
                              test_matrix_filtered, 
                              val_matrix_filtered])
-    column_names = ['Column1', 'Column2', 'Column3']
+    column_names = ['Longitude', 'Latitude', 'Speed', 'Nav status', 'Cluster']
+    df_AIS = pd.DataFrame(full_matrix, columns=column_names)
+    plt.figure(1)
+    plt.plot(df_AIS['Longitude'], df_AIS['Latitude'])
+    plt.grid()
+    plt.xlabel("Longitude")
+    plt.ylabel("Latitude")
+    
 
 
 
