@@ -53,41 +53,48 @@ def preprocess_AIS(file_path, output_path):
     print(f"CSV saved successfully to {output_path}!")
 
 
-def select_head(csv_file, percentage):
-    """ 
+def select_head(csv_file, percentage, randomize=False, seed=None):
+    """
     This function will take a .csv and a number (percentage) between 1 and 100.
     If the percentage is 100, nothing changes.
-    When the percentage is below 100, it extracts that percentage of rows, 
-    and outputs a csv file.
-    
+    When the percentage is below 100, it extracts that percentage of rows,
+    and outputs a csv file. Optionally, it can randomize the selected rows.
+
     Args:
     - csv_file (str): The path to the input CSV file.
     - percentage (int): The percentage of rows to sample (between 1 and 100).
-    
+    - randomize (bool): Whether to randomize the selected rows.
+    - seed (int, optional): Seed for randomization for reproducibility.
+
     Returns:
     - A DataFrame containing the sampled rows.
     """
     # Read the CSV file into a DataFrame
-    print("Converting csv to df")
+    print("Converting csv to df...")
     df = pd.read_csv(csv_file)
-    
+
     # Check if the percentage is 100, return the original DataFrame
     if percentage == 100:
         print("Returning the entire dataset.")
         return df
 
-    # Calculate the number of rows to take (top percentage)
+    # Calculate the number of rows to take
     num_rows = int(len(df) * (percentage / 100))
 
-    # Select the top 'num_rows' rows
-    df_selected = df.head(num_rows)
+    if randomize:
+        # Randomize the DataFrame
+        print("Randomizing the selection.")
+        df_selected = df.sample(n=num_rows, random_state=seed)
+    else:
+        # Select the top 'num_rows' rows
+        df_selected = df.head(num_rows)
 
     # Save the selected DataFrame to a new CSV file
     output_file = csv_file.replace(".csv", f"_top_{percentage}.csv")
     df_selected.to_csv(output_file, index=False)
 
     print(f"Extracted the top {percentage}% of rows. Output saved to {output_file}.")
-    
+
     return df_selected
 
 if __name__ == '__main__':
