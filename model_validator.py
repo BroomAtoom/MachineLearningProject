@@ -10,7 +10,7 @@ import joblib
 import  numpy as np
 
 # Dynamic parts
-accuracy = 89.68
+accuracy = 86.42
 cluster = None
 
 # Build folder and filename
