@@ -259,6 +259,7 @@ if plots == True:
         # Filter for the United States (including Hawaii and Puerto Rico)
         us_and_territories = world[world['NAME'].isin(['United States', 'Puerto Rico'])]
         
+        
         # Plot the filtered map (United States and Territories)
         ax = us_and_territories.plot(figsize=(10, 6), color='lightgray')
         
