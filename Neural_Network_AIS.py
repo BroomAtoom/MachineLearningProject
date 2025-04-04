@@ -31,9 +31,9 @@ print("")
 
 #----------------------- INITIAL ---------------------------------------------
 
-subfolder_name = "AIS_2020_01_09_fullycleaned_top_0.5_random_seed=7777" 
-cluster = 0   # Choose cluster [0,1,2,3,4] or None for all clusters
-learning_type = 'sklearn'
+subfolder_name = "AIS_2020_01_08_fullycleaned_random_seed=2121" 
+cluster = None   # Choose cluster [0,1,2,3,4] or None for all clusters
+learning_type = 'none'
 plots = False
 data_type = 'CSV'
 
@@ -297,10 +297,10 @@ match learning_type:
         print("")
 
         # Initialize the model
-        train_nn = MLPClassifier(hidden_layer_sizes=(4,8,16,32,50,16,8,4),
+        train_nn = MLPClassifier(hidden_layer_sizes=(4,8,4),
                                  activation = "relu",
                                  solver='adam',
-                                 max_iter=60,  
+                                 max_iter=50,  
                                  warm_start= True,  # Keeps the previous model state to continue from last fit
                                  random_state=random_seed)
         print(train_nn.get_params())

@@ -1,0 +1,17 @@
+Date and Time: 2025-04-02 12:28:19
+Data used: AIS_2020_01_09_fullycleaned_top_0.5_random_seed=7777
+Data used: CSV
+Cluster used: 3
+Random Seed: 7777
+
+MLPClassifier Parameters:
+Hidden Layer Sizes: (4, 8, 20, 40, 80, 40, 20, 8, 4)
+Activation: 'relu'
+Solver: 'adam'
+Max Iter: 60
+Warm Start: True
+Random State: 7777
+
+Max Epochs: 100
+Model Accuracy: 37.93%
+Total Time Taken: 0.00 minutes

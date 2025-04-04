@@ -2,8 +2,8 @@ import os
 import pandas as pd
 
 def main():
-    filename = "AIS_2020_01_09.csv"
-    output_filename = "AIS_2020_01_09_fullycleaned.csv"
+    filename = "AIS_2020_01_08.csv"
+    output_filename = "AIS_2020_01_08_fullycleaned.csv"
     input_folder_name = "COAST_NOAA_AIS_DATA"
     output_folder_name = "AIS_DATA_CLEANED"
     file_path = os.path.join(input_folder_name,filename)
